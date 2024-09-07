@@ -4,38 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 Not Found</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            background-color: #f8f9fa;
-            color: #343a40;
-            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #2c3e50;
+            font-family: 'Roboto', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            animation: fadeIn 0.6s ease-in-out;
         }
-        .container {
-            text-align: center;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .icon {
+            font-size: 3em;
+            color: #e74c3c;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-30px);
+            }
+            60% {
+                transform: translateY(-15px);
+            }
         }
         h1 {
-            font-size: 6em;
+            font-size: 3em;
             margin: 0;
+            color: #e74c3c;
+            font-weight: 300;
         }
         p {
-            font-size: 1.5em;
+            font-size: 1em;
+            color: #7f8c8d;
+            margin: 10px 0;
         }
         a {
-            color: #007bff;
+            color: #3498db;
             text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.3s ease;
         }
         a:hover {
+            color: #2980b9;
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div>
+        <i class="fas fa-exclamation-triangle icon"></i>
         <h1>404</h1>
         <p>Oops! The page you're looking for doesn't exist.</p>
         <p><a href="/calculator">Go back to Home</a></p>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Email Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/static/email.css">
+</head>
+<body>
+    <h1><i class="fas fa-envelope"></i> Random Email Generator</h1>
+    <button id="generateEmail"><i class="fas fa-plus"></i> Generate Mail</button>
+    <div id="emailDisplay"></div>
+    <button id="copyButton" style="display:none;"><i class="fas fa-copy"></i> Copy</button>
+    <button id="generateAnother" style="display:none;"><i class="fas fa-sync-alt"></i> Generate Another</button>
+    <div id="inbox" style="display:none;">
+        <h2><i class="fas fa-inbox"></i> Inbox</h2>
+        <button id="checkMail"><i class="fas fa-envelope-open-text"></i> Check Mail</button>
+        <div id="mailContent"></div>
+    </div>
+
+    <script src="/scripts/email.js"></script> 
+</body>
+</html>

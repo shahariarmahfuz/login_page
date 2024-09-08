@@ -1,0 +1,123 @@
+/* General Styling */
+body {
+    font-family: 'Arial', sans-serif; 
+    background-color: #f4f4f4; 
+    color: #333; 
+    margin: 0; 
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px; 
+    overflow-x: hidden; /* Prevent horizontal overflow */
+}
+
+h1, h2 {
+    color: #2980b9; 
+}
+
+h1 {
+    margin-bottom: 20px; /* Add more space below the main heading */
+}
+
+button {
+    background-color: #3498db; 
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease; 
+    margin-bottom: 15px; 
+    width: 90%; 
+    max-width: 400px; 
+    box-sizing: border-box; 
+}
+
+button:hover {
+    background-color: #2980b9; 
+    transform: scale(1.05); 
+}
+
+#emailDisplay, #mailContent {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    margin-bottom: 15px; 
+    width: 90%; 
+    max-width: 400px; 
+    box-sizing: border-box; 
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; 
+    overflow-x: auto; /* Add horizontal scroll */
+}
+
+#emailDisplay:empty, #mailContent:empty {
+    opacity: 0; 
+    transform: translateY(20px); 
+}
+
+#emailDisplay:not(:empty), #mailContent:not(:empty) {
+    opacity: 1; 
+    transform: translateY(0); 
+}
+
+/* Specific Styling */
+#inbox {
+    border: 1px solid #ddd; 
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    transition: opacity 0.3s ease-in-out, max-height 0.3s ease-in-out; 
+    overflow: hidden; 
+    width: 90%; 
+    max-width: 600px; 
+}
+
+#inbox:not([style*="display: block"]) {
+    opacity: 0;
+    max-height: 0; 
+}
+
+#inbox[style*="display: block"] {
+    opacity: 1;
+    max-height: none; /* Remove max-height */
+}
+
+#inbox h2 {
+    margin-top: 0; 
+    text-align: center; 
+}
+
+#checkMail {
+    margin-top: 10px; 
+}
+
+/* Improved Mail Content Display */
+#mailContent {
+    margin-top: 20px; 
+    border-left: 5px solid #3498db; 
+    padding-left: 15px; 
+    max-height: 400px; /* Set a maximum height */
+    overflow-y: auto; /* Enable vertical scroll */
+    height: auto; /* Adjust height to fit content */
+}
+
+#mailContent p {
+    margin: 10px 0; 
+    line-height: 1.6; 
+}
+
+#mailContent p:first-of-type {
+    margin-top: 0; 
+}
+
+/* Media Query for Smaller Screens */
+@media (max-width: 768px) {
+    button, #emailDisplay, #inbox {
+        width: 100%; 
+        max-width: 100%; 
+    }
+  

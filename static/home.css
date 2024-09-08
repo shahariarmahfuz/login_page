@@ -1,0 +1,268 @@
+/* Paste your menu CSS here */
+        /* Basic reset and body styles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000; /* Dark background */
+            color: #fff; /* White text */
+        }
+
+        /* Navigation menu styles */
+        .menu {
+            background-color: #111; /* Darker background */
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, height 0s ease 0.3s;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3); /* Box shadow for depth */
+            border-top: 2px solid #FFD700; /* Premium gold border on top */
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            z-index: 999; /* Ensure menu is above other content */
+        }
+
+        .menu.active {
+            height: auto;
+            opacity: 1;
+            transition: opacity 0.3s ease, height 0s ease 0s;
+        }
+
+        .menu ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 20px 0;
+            text-align: center; /* Center align items horizontally */
+        }
+
+        .menu ul li {
+            position: relative; /* Ensure relative positioning for divider */
+            margin: 18px 0; /* Add margin between items */
+        }
+
+        .menu ul li a {
+            text-decoration: none;
+            color: #fff; /* White text */
+            font-size: 14px;
+            padding: 6px 12px;
+            display: block;
+            transition: transform 0.3s, color 0.3s;
+        }
+
+        .menu ul li a:hover {
+            color: #FFD700; /* Premium gold color on hover */
+            transform: translateY(-3px); /* Move text slightly up on hover */
+        }
+
+        /* Divider between menu items */
+        .menu ul li::before {
+            content: '';
+            position: absolute;
+            bottom: -10px; /* Adjust position of the divider from bottom */
+            left: 50%; /* Center align divider horizontally */
+            transform: translateX(-50%);
+            height: 1px; /* Height of the divider */
+            width: calc(100% - 40px); /* Width of the divider */
+            background-color: rgba(255, 215, 0, 0.5); /* Color of the divider */
+        }
+
+        /* Menu button styles */
+        .menu-btn {
+            background-color: #000; /* Premium gold background */
+            color: #fff; /* Dark text */
+            border: none;
+            padding: 8px 16px; /* Smaller padding */
+            font-size: 16px; /* Smaller font size */
+            cursor: pointer;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Lighter box shadow */
+            transition: background-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+
+        .menu-btn: {
+            background-color: #000; /* Darker background on hover */
+            box-shadow: 0 0 8px 2px rgba(255, 215, 0, 0.5); /* Reduced intensity glowing effect */
+            transform: scale(1.02); /* Slightly scale up on hover */
+        }
+
+        /* Your existing styles */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            background: #000;
+            margin: 0;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .glass-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.2), 0 0 10px rgba(255, 255, 255, 0.3);
+            animation: fadeIn 2s ease-out;
+            margin-bottom: 20px;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            margin-top: 70px; /* Adjust for menu height */
+        }
+
+        .profile-picture-container {
+            position: absolute;
+            top: -40px; /* Adjust this value as needed */
+            right: 20px; /* Adjust this value to position it outside */
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            z-index: 1;
+            padding: 0; /* Removed padding */
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            animation: fadeInProfile 2s ease-out;
+            display: flex; /* Added flexbox to center the image */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            pointer-events: none; /* Prevent interaction */
+            transition: all 0.5s ease-in-out; /* Add a smooth transition */
+        }
+
+        .profile-picture-container:hover {
+            transform: scale(1.1); /* Add a hover effect */
+        }
+
+        .profile-picture {
+            width: 115%;
+            height: 115%;
+            object-fit: cover;
+            pointer-events: none; /* Prevent interaction */
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeInProfile {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .glass-content {
+            color: #ffdf80;
+            width: 100%;
+            flex-grow: 1;
+            padding-top: 60px; /* Adjusted to ensure profile picture is fully inside the box */
+            box-sizing: border-box;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        .glass-content h1, .glass-content h3, .glass-content p {
+            margin: 0;
+            margin-bottom: 10px;
+        }
+
+        .glass-content p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        @keyframes sideAnimation {
+            0% { transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+            50% { transform: translateX(-50%) translateY(-50%) rotate(180deg); }
+            100% { transform: translateX(-50%) translateY(-50%) rotate(360deg); }
+        }
+
+        .glass-container::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 15px;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+            animation: sideAnimation 5s infinite linear;
+            pointer-events: none;
+        }
+
+                @media (min-width: 600px) {
+            .glass-container {
+                width: 80%;
+            }
+
+            .glass-container.large {
+                height: auto; /* Increased height for the first box */
+            }
+
+            .glass-container.small {
+                height: auto; /* Adjusted height for the second box */
+            }
+        }
+
+        @media (max-width: 599px) {
+            .glass-container {
+                width: 90%;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 70px; /* Adjust for menu height */
+            }
+
+            .glass-container.large,
+            .glass-container.small {
+                height: auto; /* Allow height to adjust based on content */
+            }
+
+            .glass-content {
+                padding-top: 60px; /* Adjust padding for smaller screens */
+            }
+
+            .profile-picture-container {
+                top: 20px; 
+                    /* Adjust position for smaller screens */
+                right: 20px; /* Adjust right position for smaller screens */
+                width: 70px;
+                height: 70px;
+            }
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            width: 100%; /* Ensure footer takes full width */
+            display: flex;
+            justify-content: center;
+        }

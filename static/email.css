@@ -52,6 +52,8 @@ button:hover {
     box-sizing: border-box; 
     transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; 
     overflow-x: auto; /* Add horizontal scroll */
+    overflow-y: auto; /* Add vertical scroll */
+    max-height: 300px; /* Set a max height for scrolling */
 }
 
 #emailDisplay:empty, #mailContent:empty {
@@ -100,8 +102,7 @@ button:hover {
     margin-top: 20px; 
     border-left: 5px solid #3498db; 
     padding-left: 15px; 
-    max-height: 400px; /* Set a maximum height */
-    overflow-y: auto; /* Enable vertical scroll */
+    overflow-y: auto; /* Ensure content is fully visible */
     height: auto; /* Adjust height to fit content */
 }
 
@@ -120,4 +121,4 @@ button:hover {
         width: 100%; 
         max-width: 100%; 
     }
-  
+}

@@ -156,7 +156,7 @@ def send_email(to_email, subject, body):
 # Redirect to login page if not logged in, storing the next route
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'login_user', 'signup', 'send_code_get', 'verify_get', 'verify_code_get', 'congratulations', 'resend_code', 'forgot_password', 'send_reset_code', 'verify_reset_code', 'reset_password', 'resend_reset_code']
+    allowed_routes = ['login', 'login_user', 'signup', 'send_code_get', 'verify_get', 'verify_code_get', 'congratulations', 'resend_code', 'forgot_password', 'send_reset_code', 'verify_reset_code', 'reset_password', 'resend_reset_code', 'keep_alive']
     if not is_logged_in() and request.endpoint not in allowed_routes:
         return redirect(url_for('login', next=request.endpoint))
 

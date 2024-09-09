@@ -208,11 +208,11 @@
             const password = document.getElementById('password').value;
             const errorElement = document.getElementById('password-error');
             if (password.length < 8) {
-                errorElement.textContent = "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।";
+                errorElement.textContent = "Password must be at least 8 characters long.";
                 errorElement.style.display = 'block';
                 return false;
             } else if (password.length > 20) {
-                errorElement.textContent = "পাসওয়ার্ড সর্বাধিক ২০ অক্ষরের হতে পারে।";
+                errorElement.textContent = "Password can be maximum of 20 characters.";
                 errorElement.style.display = 'block';
                 return false;
             }

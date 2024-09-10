@@ -11,7 +11,7 @@ import requests
 import time
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Secret key for session management
+app.secret_key = 'your_secret_key'
 
 # File to store user credentials
 USER_FILE = 'users.txt'
@@ -57,14 +57,17 @@ def keep_alive():
 def keep_alive_task():
     while True:
         try:
-            # Send a GET request to the keep_alive route
-            requests.get('https://nekotools.onrender.com/keep_alive')
-            print("Keep-alive ping sent.")
+            response = requests.get('https://nekotools.onrender.com/keep_alive')
+            if response.status_code == 200:
+                print("Keep-alive ping sent successfully.")
+            else:
+                print(f"Keep-alive ping failed with status code: {response.status_code}")
         except requests.exceptions.RequestException as e:
             print(f"Failed to send keep-alive ping: {e}")
         
-        # Sleep for 20 minutes (1200 seconds)
-        time.sleep(600)
+        # Sleep for 5 minutes (300 seconds)
+        time.sleep(300)
+
 # Helper function to check if the user is logged in
 def is_logged_in():
     return 'logged_in' in session

@@ -1,72 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shahariar Mahfuz WEB</title>
-    <link rel="stylesheet" href="/static/home.css">
-    <!-- Add a link to a font awesome CDN to use icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <link rel="stylesheet" href="https://unpkg.com/boxicons/css/boxicons.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #24c6dc, #514a9d);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Open Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: transparent;
+        }
+
+        .glass-container {
+            position: relative;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(8px); /* Blurred effect */
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+            color: white;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin: 10px;
+            min-height: 300px; /* Set a minimum height to ensure consistent size */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-btn {
+            display: flex;
+            align-items: center; /* Align items vertically */
+            justify-content: center; /* Center text and icon horizontally */
+            padding: 12px 30px;
+            color: #fff;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background-size: 400% 100%;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            z-index: 1;
+            transition: all .5s ease-in-out;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+            margin: 10px;
+            text-decoration: none;
+            font-weight: 600; /* Bold text for button */
+        }
+
+        .custom-btn i {
+            margin-right: 8px; /* Space between icon and text */
+        }
+
+        .btn-15 {
+            background-image: linear-gradient(45deg, #24c6dc, #514a9d, #24c6dc, #514a9d);
+            animation: gradient-animation 4s ease infinite;
+            box-shadow: 0 6px 25px rgba(65, 132, 234, 0.6), inset 0 0 0 0 #fff;
+        }
+
+        .btn-15:hover {
+            background-position: 100% 0;
+            transition: all .7s ease-in-out;
+            transform: scale(1.08);
+            box-shadow: 0 8px 30px rgba(65, 132, 234, 0.9), inset 0 0 10px #fff;
+            text-shadow: 1px 1px 8px rgba(255, 255, 255, 0.7);
+        }
+
+        @keyframes gradient-animation {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        #typed-output1,
+        #typed-output2 {
+            font-size: 18px; /* Adjust as needed */
+            font-weight: 400; /* Set font weight to normal */
+            color: #ffffff;
+            display: block;
+            margin-bottom: 20px;
+            position: relative;
+            line-height: 1.4;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .typed-cursor {
+            color: #ffffff;
+            animation: blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes blink-caret {
+            from, to {
+                border-color: transparent;
+            }
+            50% {
+                border-color: #ffffff;
+            }
+        }
+
+        p {
+            font-size: 18px;
+            font-weight: 400;
+            color: #ffffff;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 600px) {
+            .glass-container {
+                padding: 15px;
+                width: 95%;
+                max-width: none;
+            }
+
+            .custom-btn {
+                padding: 10px 25px;
+                font-size: 14px;
+                margin: 8px; /* Adjusted margin for smaller screens */
+            }
+
+            #typed-output1,
+            #typed-output2 {
+                font-size: 16px; /* Adjusted font size for smaller screens */
+            }
+
+            p {
+                font-size: 16px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Add an icon to the menu button -->
-    <button class="menu-btn" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
-    
-    <!-- Menu -->
-    <div class="menu">
-        <ul>
-            <li><a href="https://shahariar-mahfuz.vercel.app">About</a></li>
-            <li><a href="mailto:shahariarmahfuzweb@outlook.com">Contact</a></li>
-            <li><a href="https://t.me/Itachi_Uchiha_64">Telegram</a></li>
-            <li><a href="#personal">Thanks for visiting my site</a></li>
-        </ul>
+    <div id="particles-js"></div>
+    <div class="container mx-auto h-screen flex justify-center items-center">
+        <div class="glass-container">
+            <!-- Typing effects -->
+            <div id="typed-output1"></div>
+            
+            <a href="/email" class="custom-btn btn-15">
+                <i class='bx bx-envelope'></i> Email Generator
+            </a>
+            <a href="/pas" class="custom-btn btn-15">
+                 <i class='bx bx-shield'></i> Password generator
+            </a>
+            <a href="/age" class="custom-btn btn-15">
+                <i class='bx bx-user'></i> Age calculator
+            <div id="typed-output2"></div>
+            <a href="/logout" class="custom-btn btn-15">
+                <i class='bx bx-log-out'></i> Log Out
+            </a>
+        </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="glass-container large">
-        <div class="profile-picture-container">
-            <img src="https://w0.peakpx.com/wallpaper/19/234/HD-wallpaper-albert-einstein-einstein-eyes-glass-gray-inteligence-knowledge-math-mustache-old-science.jpg" alt="Profile Picture" class="profile-picture">
-        </div>
-        <div class="glass-content">
-            <h4>Albert Einstein</h4>
-            <p>Albert Einstein, a German-born physicist, revolutionized science with his theories of relativity and the famous equation E=mc². He received the 1921 Nobel Prize for his work on the photoelectric effect. Einstein's contributions significantly advanced theoretical physics and influenced various technologies, solidifying his legacy as a pivotal figure in science...</p>
-            <p><a href="https://einstein-sage.vercel.app/" class="read-more-link">Read More</a></p>
-        </div>
-    </div>
-    <div class="glass-container small">
-        <div class="profile-picture-container">
-            <img src="https://i.ibb.co/MBB2JWc/IMG-20240615-202914.jpg" alt="Profile Picture" class="profile-picture">
-        </div>
-        <div class="glass-content">
-            <h4>Isaac Newton</h4>
-            <p>Isaac Newton, an English mathematician and physicist, formulated the laws of motion and universal gravitation. His work laid the foundation for classical mechanics and profoundly influenced scientific thinking...</p>
-            <p><a href="https://newton-sage.vercel.app/" class="read-more-link">Read More</a></p>
-        </div>
-    </div>
-    <div class="glass-container small">
-        <div class="profile-picture-container">
-            <img src="https://i.postimg.cc/rwXDyQv3/Avicenna.webp" alt="Profile Picture" class="profile-picture">
-        </div>
-        <div class="glass-content">
-            <h4>Avicenna Ibn Sina</h4>
-            <p>Avicenna, a Persian polymath in the Islamic Golden Age, made significant contributions to medicine, philosophy, and astronomy. His works, especially "The Canon of Medicine," shaped medieval and Renaissance scholarship...</p>
-            <p><a href="https://ibn-sina-shahariarmahfuzs-projects.vercel.app/" class="read-more-link">Read More</a></p>
-        </div>
-    </div>
-    <div class="glass-container small">
-        <div class="profile-picture-container">
-            <img src="https://i.postimg.cc/FFYGcgZw/portrait-of-leonardo-da-vinci-1452-1519-getty.jpg" alt="Profile Picture" class="profile-picture">
-        </div>
-        <div class="glass-content">
-            <h4>Leonardo da Vinci</h4>
-            <p>Leonardo da Vinci, a Renaissance polymath, excelled in art, science, and engineering. Renowned for masterpieces like the "Mona Lisa" and "The Last Supper," he epitomized creativity and innovation...</p>
-            <p><a href="https://leonardo-da-vinci.vercel.app/" class="read-more-link">Read More</a></p>
-        </div>
-    </div>
-    <a href="/logout">Logout</a>
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#61dafb"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#61dafb"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    },
+                    "image": {
+                        "src": "img/github.svg",
+                        "width": 100,
+                        "height": 100
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#61dafb",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 6,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 400,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
 
-    <!-- JavaScript for Menu Functionality -->
-    <footer>© 2024 Shahariar Mahfuz. All rights reserved</footer>
-    <script src="/scripts/home.js"></script>
+        var typed1 = new Typed('#typed-output1', {
+            strings: ["Welcome to the Premium Experience!"],
+            typeSpeed: 40,
+            backSpeed: 20,
+            startDelay: 1000,
+            backDelay: 1500,
+            loop: false,  // Stop after one full cycle
+            showCursor: false,
+            onComplete: function() {
+                document.querySelector('#typed-output1').classList.add('completed');
+            }
+        });
+
+        var typed2 = new Typed('#typed-output2', {
+            strings: ["Creating sleek and smooth animations.", "Make your designs stand out!"],
+            typeSpeed: 40,
+            backSpeed: 20,
+            startDelay: 1000,
+            backDelay: 1500,
+            loop: false,  // Stop after one full cycle
+            showCursor: false,
+            onComplete: function() {
+                document.querySelector('#typed-output2').classList.add('completed');
+            }
+        });
+    </script>
 </body>
 </html>

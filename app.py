@@ -84,77 +84,72 @@ def read_users():
         user_data[email] = {'password': password, 'verified': verified.lower() == 'true'}
     return user_data
 
-# Email template
-def create_email_message(subject, body):
-    html = f"""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{subject}</title>
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-            body {{
-                font-family: 'Montserrat', sans-serif;
-                background-color: #f0f8ff;
-                color: #333333;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                margin: 0;
-                text-align: center;
-            }}
-            h1 {{
-                color: #ff6347;
-                font-size: 28px;
-                margin-bottom: 10px;
-            }}
-            .verification-code {{
-                font-size: 26px;
-                font-weight: bold;
-                color: #32cd32;
-                margin: 25px 0;
-            }}
-            .message {{
-                color: #666666;
-                margin-bottom: 25px;
-                font-size: 16px;
-            }}
-            .thank-you {{
-                color: #333333;
-                font-size: 18px;
-                margin-top: 20px;
-            }}
-        </style>
-    </head>
-    <body>
-        <h1>{subject}</h1>
-        <p class="message">{body}</p>
-        <p class="thank-you">Thank you for staying with us. We will try our best to provide the highest service.</p>
+# Email template with updated HTML content
+def send_verification_email(to_email, verification_code):
+    sender_email = "nekotoolcontact@gmail.com"
+    sender_name = "Neko Tool 🔥"
+    password = EMAIL_PASSWORD
+    subject = "Your Verification Code"
+
+    # Simplified HTML content with thin border and minimal design
+    html_content = f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; 
+                    padding: 15px; border: 1px solid #007bff;">
+            <!-- Header Section -->
+            <h2 style="text-align: center; color: white; background-color: #007bff; padding: 10px; 
+                       border-radius: 5px; font-size: 20px;">
+                {subject}
+            </h2>
+            
+            <!-- Main Body -->
+            <p style="color: #333; font-size: 16px; text-align: center;">
+                Dear valued user,<br><br>
+                Please use the following code to verify your email:
+            </p>
+            <div style="text-align: center; margin: 20px 0;">
+                <h1 style="font-size: 36px; color: #007bff; border: 1px solid #007bff; 
+                           display: inline-block; padding: 10px 15px; border-radius: 5px;">
+                    {verification_code}
+                </h1>
+            </div>
+            
+            <!-- Footer Section -->
+            <div style="border-top: 1px solid #ddd; margin-top: 20px; padding-top: 10px; text-align: center;">
+                <p style="color: #888; font-size: 12px;">
+                    The code is valid for 5 minutes. If you did not request this, please ignore this email.
+                </p>
+                <p style="color: #666; font-size: 12px; margin-top: 15px;">
+                    © Neko Tool 🔥. All Rights Reserved. | 
+                    <a href="https://yourwebsite.com/subscription" style="color: #007bff; text-decoration: none;">
+                        Manage Subscription
+                    </a> | 
+                    <a href="https://yourwebsite.com/tutorial" style="color: #007bff; text-decoration: none;">
+                        Tutorial
+                    </a>
+                </p>
+            </div>
+        </div>
     </body>
     </html>
     """
-    return html
 
-# Helper function to send an email
-def send_email(to_email, subject, body):
+    # Setup email content
+    msg = MIMEMultipart("alternative")
+    msg["From"] = f"{sender_name} <{sender_email}>"
+    msg["To"] = to_email
+    msg["Subject"] = subject
+    msg.attach(MIMEText(html_content, "html"))
+
+    # Send the email using Gmail's SMTP server
     try:
-        msg = MIMEMultipart()
-        msg['From'] = 'Neko Tool 🔥'
-        msg['To'] = to_email
-        msg['Subject'] = subject
-
-        msg.attach(MIMEText(create_email_message(subject, body), 'html'))
-
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:
-            server.starttls()
-            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-            server.sendmail(EMAIL_ADDRESS, to_email, msg.as_string())
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(sender_email, password)
+            server.sendmail(sender_email, to_email, msg.as_string())
+        print(f"Verification code {verification_code} sent to {to_email}")
     except Exception as e:
-        print(e)
+        print(f"Failed to send email: {e}")
 
 # Redirect to login page if not logged in, storing the next route
 @app.before_request
@@ -219,9 +214,8 @@ def send_code_get():
     session['password'] = password
     session['verification_code'] = verification_code
 
-    subject = 'Email Verification Code'
-    body = f'Please use the following code to verify your email address: <div class="verification-code">{verification_code}</div>'
-    send_email(email, subject, body)
+    # Send the verification email using the updated template
+    send_verification_email(email, verification_code)
 
     return redirect(url_for('verify_get'))
 
@@ -236,52 +230,49 @@ def resend_code():
     verification_code = random.randint(100000, 999999)
     session['verification_code'] = verification_code
 
-    subject = 'New Email Verification Code'
-    body = f'A new verification code has been sent. Please use the following code: <div class="verification-code">{verification_code}</div>'
-    send_email(email, subject, body)
+    # Resend the verification email using the updated template
+    send_verification_email(email, session['verification_code'])
 
-    return render_template('verify.html', email=email, message='A new verification code has been sent. Please enter the new code.')
+    return redirect(url_for('verify_get'))
 
-# Route to serve the verification page using GET
-@app.route('/verify', methods=['GET'])
+# Route to serve the verification page
+@app.route('/verify')
 def verify_get():
     if 'email' not in session:
         return redirect(url_for('signup'))
-    email = session['email']
-    return render_template('verify.html', email=email)
+    return render_template('verify.html')
 
-# Route to verify the code using GET
+# Route to verify the code
 @app.route('/verify-code', methods=['GET'])
 def verify_code_get():
-    input_code = request.args.get('code')
-    if 'verification_code' in session and int(input_code) == session['verification_code']:
-        email = session['email']
-        password = session['password']
-        with open(USER_FILE, 'a') as f:
-            f.write(f'{email},{password},true\n')
+    code = request.args.get('code')
+    email = session.get('email')
+    password = session.get('password')
+    verification_code = session.get('verification_code')
 
-        session.pop('email', None)
-        session.pop('password', None)
+    if not email or not verification_code:
+        return redirect(url_for('signup'))
+
+    if str(code) == str(verification_code):
+        users = read_users()
+        users[email] = {'password': password, 'verified': True}
+        with open(USER_FILE, 'w') as f:
+            for user, data in users.items():
+                f.write(f"{user},{data['password']},{data['verified']}\n")
+
         session.pop('verification_code', None)
-
         session['logged_in'] = True
-        return redirect(url_for('home'))
+        return redirect(url_for('congratulations'))
     else:
-        return render_template('verify.html', email=session['email'], error='Incorrect verification code. Please try again.')
+        error = 'Invalid verification code'
+        return render_template('verify.html', error=error)
 
-# Route to show congratulations message
+# Route to serve the congratulations page
 @app.route('/congratulations')
 def congratulations():
-    if is_logged_in():
-        return redirect(url_for('home'))
-    return "Congratulations! Your account has been created."
-
-# Home page after successful login
-@app.route('/home')
-def home():
     if not is_logged_in():
         return redirect(url_for('login'))
-    return render_template('home.html')
+    return render_template('congratulations.html')
 
 # Route to serve the forgot password page
 @app.route('/forgot-password')
@@ -294,73 +285,93 @@ def send_reset_code():
     email = request.args.get('email')
     users = read_users()
 
-    if email not in users or not users[email]['verified']:
-        return render_template('forgot_password.html', error='Email not found or not verified.')
+    if email not in users:
+        error = 'Email not found'
+        return render_template('forgot_password.html', error=error)
 
-    verification_code = random.randint(100000, 999999)
+    reset_code = random.randint(100000, 999999)
+    session['reset_code'] = reset_code
     session['reset_email'] = email
-    session['reset_code'] = verification_code
 
-    subject = 'Password Reset Code'
-    body = f'Please use the following code to reset your password: <div class="verification-code">{verification_code}</div>'
-    send_email(email, subject, body)
-    
+    # Send the reset code via email
+    send_verification_email(email, reset_code)
+
     return redirect(url_for('verify_reset_code'))
 
-# Route to serve the reset code verification page
+# Route to serve the verify reset code page
 @app.route('/verify-reset-code')
 def verify_reset_code():
     if 'reset_email' not in session:
         return redirect(url_for('forgot_password'))
-    return render_template('verify_reset_code.html', email=session['reset_email'])
+    return render_template('verify_reset_code.html')
 
-# Route to reset the password
-@app.route('/reset-password', methods=['GET'])
+# Route to verify the reset code
+@app.route('/verify-reset-code', methods=['GET'])
+def verify_reset_code_get():
+    code = request.args.get('code')
+    reset_code = session.get('reset_code')
+
+    if not reset_code or str(code) != str(reset_code):
+        error = 'Invalid reset code'
+        return render_template('verify_reset_code.html', error=error)
+
+    session.pop('reset_code', None)
+    return redirect(url_for('reset_password'))
+
+# Route to serve the reset password page
+@app.route('/reset-password')
 def reset_password():
-    input_code = request.args.get('code')
-    new_password = request.args.get('new_password')
-    
-    if 'reset_code' in session and int(input_code) == session['reset_code']:
-        email = session['reset_email']
-        users = read_users()
-        
-        if email in users:
-            # Update only the password for the specific email
-            users[email]['password'] = new_password
-            
-            # Re-write the users.txt file, but only change the password for the relevant email
-            with open(USER_FILE, 'w') as f:
-                for user_email, data in users.items():
-                    verified_status = 'true' if data['verified'] else 'false'
-                    f.write(f'{user_email},{data["password"]},{verified_status}\n')
-            
-            # Clear session data after reset
-            session.pop('reset_email', None)
-            session.pop('reset_code', None)
-            
-            return redirect(url_for('login'))
-        else:
-            return render_template('verify_reset_code.html', email=email, error='Email not found.')
-    else:
-        return render_template('verify_reset_code.html', email=session['reset_email'], error='Incorrect verification code.')
+    if 'reset_email' not in session:
+        return redirect(url_for('forgot_password'))
+    return render_template('reset_password.html')
 
-# Route to resend reset code
-@app.route('/resend-reset-code')
+# Route to handle the reset password process
+@app.route('/reset-password', methods=['POST'])
+def reset_password_post():
+    new_password = request.form.get('new_password')
+    confirm_password = request.form.get('confirm_password')
+    email = session.get('reset_email')
+
+    if not email:
+        return redirect(url_for('forgot_password'))
+
+    if new_password != confirm_password:
+        error = 'Passwords do not match'
+        return render_template('reset_password.html', error=error)
+
+    users = read_users()
+    if email in users:
+        users[email]['password'] = new_password
+        with open(USER_FILE, 'w') as f:
+            for user, data in users.items():
+                f.write(f"{user},{data['password']},{data['verified']}\n")
+        
+        session.pop('reset_email', None)
+        return redirect(url_for('login'))
+    else:
+        error = 'Email not found'
+        return render_template('reset_password.html', error=error)
+
+# Route to resend the reset code
+@app.route('/resend-reset-code', methods=['GET'])
 def resend_reset_code():
     if 'reset_email' not in session:
         return redirect(url_for('forgot_password'))
 
     email = session['reset_email']
-    verification_code = random.randint(100000, 999999)
-    session['reset_code'] = verification_code
+    reset_code = random.randint(100000, 999999)
+    session['reset_code'] = reset_code
 
-    subject = 'New Password Reset Code'
-    body = f'A new password reset code has been sent. Please use the following code: <div class="verification-code">{verification_code}</div>'
-    send_email(email, subject, body)
+    # Resend the reset code via email
+    send_verification_email(email, reset_code)
 
-    return render_template('verify_reset_code.html', email=email, message='A new verification code has been sent.')
+    return redirect(url_for('verify_reset_code'))
 
-# Start the keep-alive thread when the Flask app starts
+# Run the periodic keep-alive task in a separate thread
+keep_alive_thread = threading.Thread(target=keep_alive_task)
+keep_alive_thread.daemon = True
+keep_alive_thread.start()
+
 if __name__ == "__main__":
     threading.Thread(target=keep_alive_task, daemon=True).start()
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)

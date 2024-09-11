@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <title>Premium Login Page</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
@@ -20,47 +20,51 @@
         }
 
         .login-container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 350px;
-            width: 90%;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            max-width: 380px;
+            width: 100%;
             text-align: center;
-            border: 1px solid #e1e1e1;
-            animation: fadeIn 1s ease-in-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            animation: fadeIn 0.6s ease-in-out;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         h2 {
             margin-bottom: 20px;
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 600;
             color: #514a9d;
+            letter-spacing: 1px;
         }
 
         .input-field {
+            background: rgba(255, 255, 255, 0.2);
             color: black;
-            padding: 10px;
-            border: 2px solid #e1e1e1;
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
             border-radius: 8px;
             width: 100%;
-            margin: 10px 0;
-            font-size: 14px;
-            transition: all .3s ease-in-out;
+            margin: 12px 0;
+            font-size: 15px;
+            transition: all 0.3s ease-in-out;
             box-sizing: border-box;
-            padding-right: 40px; /* Adjusted for the eye icon */
             position: relative;
         }
 
         .input-field:focus {
             border-color: #24c6dc;
-            box-shadow: 0 0 8px rgba(36, 198, 220, 0.8);
+            box-shadow: 0 0 10px rgba(36, 198, 220, 0.6);
             outline: none;
+            background: rgba(255, 255, 255, 0.35);
         }
 
         .password-container {
@@ -70,14 +74,14 @@
 
         .toggle-password {
             position: absolute;
-            right: 10px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
-            font-size: 18px;
+            font-size: 20px;
             color: #514a9d;
             z-index: 1;
-            transition: transform 0.3s ease;
+            transition: transform 0.2s ease;
         }
 
         .toggle-password:hover {
@@ -89,34 +93,34 @@
         }
 
         .custom-btn {
-            padding: 10px;
+            padding: 12px;
             color: #fff;
-            font-size: 16px;
+            font-size: 17px;
             text-transform: uppercase;
             text-align: center;
-            background-size: 400% 100%;
             border-radius: 50px;
             border: none;
             cursor: pointer;
-            transition: all .5s ease-in-out;
-            background-image: linear-gradient(45deg, #24c6dc, #514a9d, #24c6dc, #514a9d);
-            animation: gradient-animation 4s ease infinite;
+            transition: all 0.4s ease-in-out;
+            background-image: linear-gradient(45deg, #24c6dc, #514a9d);
+            background-size: 300% 100%;
             width: 100%;
-            margin: 20px 0 10px;
+            margin: 20px 0 15px;
         }
 
         .custom-btn:hover {
             background-position: 100% 0;
-            transform: scale(1.05);
-            box-shadow: 0 8px 30px rgba(65, 132, 234, 0.8), inset 0 0 10px #fff;
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(65, 132, 234, 0.6);
         }
 
         .forgot-link, .signup-link {
             display: block;
-            margin-top: 10px;
+            margin-top: 12px;
             color: #514a9d;
             text-decoration: none;
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: 500;
         }
 
         .forgot-link:hover, .signup-link:hover {
@@ -126,13 +130,13 @@
         .social-icons {
             display: flex;
             justify-content: center;
-            margin-top: 20px;
+            margin-top: 25px;
         }
 
         .social-icons a {
             text-decoration: none;
-            font-size: 24px;
-            margin: 0 10px;
+            font-size: 26px;
+            margin: 0 12px;
             color: #514a9d;
             transition: color 0.3s;
         }
@@ -141,20 +145,13 @@
             color: #24c6dc;
         }
 
-        @keyframes gradient-animation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Mobile responsiveness */
         @media (max-width: 480px) {
             .login-container {
-                padding: 15px;
+                padding: 20px;
             }
 
             h2 {
-                font-size: 22px;
+                font-size: 24px;
             }
 
             .input-field {
@@ -163,13 +160,13 @@
             }
 
             .custom-btn {
-                padding: 12px;
-                font-size: 14px;
+                padding: 14px;
+                font-size: 15px;
             }
 
             .social-icons a {
                 font-size: 22px;
-                margin: 0 8px;
+                margin: 0 10px;
             }
         }
     </style>
@@ -209,7 +206,7 @@
 
             this.classList.toggle('ri-eye-line');
             this.classList.toggle('ri-eye-off-line');
-            this.classList.toggle('open'); // Add animation class
+            this.classList.toggle('open');
         });
     </script>
 </body>

@@ -1,1 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live TV Streaming</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
 
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: #1e2a38;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .link-btn {
+            display: inline-block;
+            background-color: #007bff;
+            color: #fff;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 10px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .link-btn:hover {
+            background-color: #0056b3;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .channel-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .group {
+            margin-bottom: 20px;
+        }
+
+        .group h2 {
+            font-size: 1.5rem;
+            margin: 0;
+            padding: 10px;
+            background: #007bff;
+            color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-transform: uppercase;
+        }
+
+        .channel-btn {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #333;
+            background: #ffffff;
+            transition: background 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .channel-btn:hover {
+            background: #f0f0f0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .channel-logo-container {
+            width: 60px;
+            height: 60px;
+            margin-right: 15px;
+            overflow: hidden;
+            border-radius: 50%;
+            border: 2px solid #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .channel-logo {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .channel-list {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+
+            .group h2 {
+                font-size: 1.2rem;
+            }
+
+            .channel-logo-container {
+                width: 50px;
+                height: 50px;
+            }
+
+            .channel-btn {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .channel-logo-container {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-tv"></i> Select an M3U Playlist</h1>
+        </header>
+
+        <section>
+            <div>
+                <label for="m3u-selector">Choose a playlist:</label>
+                <select id="m3u-selector">
+                    {% for link_name, link_url in m3u_urls.items() %}
+                        <option value="{{ link_name }}" {% if link_name == selected_link %}selected{% endif %}>{{ link_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div id="channelList" class="channel-list">
+                <!-- Channels will be populated here by JavaScript -->
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selector = document.getElementById('m3u-selector');
+            const channelList = document.getElementById('channelList');
+
+            function loadChannels(linkName) {
+                fetch(`/channels/${linkName}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        channelList.innerHTML = '';
+                        data.grouped_channels.forEach(group => {
+                            const groupDiv = document.createElement('div');
+                            groupDiv.className = 'group';
+                            const groupTitle = document.createElement('h2');
+                            groupTitle.textContent = group.group;
+                            groupDiv.appendChild(groupTitle);
+                            const channelsDiv = document.createElement('div');
+                            channelsDiv.className = 'channels';
+                            group.channels.forEach(channel => {
+                                const channelBtn = document.createElement('a');
+                                channelBtn.href = `/channel/${linkName}/${channel.name}`;
+                                channelBtn.className = 'channel-btn';
+                                const logoContainer = document.createElement('div');
+                                logoContainer.className = 'channel-logo-container';
+                                const logo = document.createElement('img');
+                                logo.src = channel.logo;
+                                logo.alt = `${channel.name} logo`;
+                                logo.className = 'channel-logo';
+                                const name = document.createElement('span');
+                                name.textContent = channel.name;
+                                logoContainer.appendChild(logo);
+                                channelBtn.appendChild(logoContainer);
+                                channelBtn.appendChild(name);
+                                channelsDiv.appendChild(channelBtn);
+                            });
+                            groupDiv.appendChild(channelsDiv);
+                            channelList.appendChild(groupDiv);
+                        });
+                    });
+            }
+
+            // Load the default link's channels on page load
+            loadChannels(selector.value);
+
+            // Update the channels when a different playlist is selected
+            selector.addEventListener('change', function() {
+                loadChannels(this.value);
+            });
+        });
+    </script>
+</body>
+</html>

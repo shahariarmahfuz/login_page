@@ -359,8 +359,95 @@ def resend_reset_code():
     send_email(email, subject, body)
 
     return render_template('verify_reset_code.html', email=email, message='A new verification code has been sent.')
+    
+# Multiple M3U URLs
+m3u_urls = {
+    "Link 1": "https://raw.githubusercontent.com/FunctionError/PiratesTv/main/combined_playlist.m3u",
+    "Link 2": "https://1rdk.short.gy/Himel-Op-Premium-Playlist.m3u",
+}
+
+# Function to parse the m3u file and extract channel information
+def parse_m3u(m3u_url):
+    response = requests.get(m3u_url)
+    content = response.text
+
+    # Regex to extract channel details and URLs
+    pattern = re.compile(r'#EXTINF:-1.*?tvg-logo="(.*?)".*?group-title="(.*?)".*?,(.*?)\n(.*?)\n')
+    channels = []
+    
+    matches = pattern.findall(content)
+    for match in matches:
+        logo, group_title, channel_name, stream_url = match
+        channels.append({
+            "name": channel_name,
+            "logo": logo,
+            "group": group_title,
+            "url": stream_url
+        })
+
+    return channels
+
+# Home route to show M3U options and default to the first M3U link
+@app.route('/channel')
+def index():
+    default_link = next(iter(m3u_urls.keys()))
+    selected_link = request.args.get('link', default_link)
+    
+    channels = parse_m3u(m3u_urls[selected_link])
+    
+    # Group channels by their group-title
+    grouped_channels = {}
+    for channel in channels:
+        group = channel["group"]
+        if group not in grouped_channels:
+            grouped_channels[group] = []
+        grouped_channels[group].append(channel)
+    
+    return render_template('index.html', m3u_urls=m3u_urls, grouped_channels=grouped_channels, selected_link=selected_link)
+
+# Route to load a specific channel
+@app.route('/channel/<link_name>/<channel_name>')
+def view_channel(link_name, channel_name):
+    m3u_url = m3u_urls.get(link_name)
+    if not m3u_url:
+        return "Invalid M3U link", 404
+    
+    channels = parse_m3u(m3u_url)
+
+    # Find the channel details by name
+    channel = next((ch for ch in channels if ch['name'] == channel_name), None)
+
+    if channel:
+        # Get related channels from the same group
+        related_channels = [ch for ch in channels if ch['group'] == channel['group'] and ch['name'] != channel_name]
+        # Limit the number of related channels to 5
+        related_channels = related_channels[:5]
+        return render_template('channel.html', channel=channel, related_channels=related_channels, link_name=link_name)
+    else:
+        return "Channel not found", 404
+
+# Route to fetch channels for a given M3U link
+@app.route('/channels/<link_name>')
+def fetch_channels(link_name):
+    m3u_url = m3u_urls.get(link_name)
+    if not m3u_url:
+        return jsonify({'error': 'Invalid M3U link'}), 404
+
+    channels = parse_m3u(m3u_url)
+    
+    # Group channels by their group-title
+    grouped_channels = {}
+    for channel in channels:
+        group = channel["group"]
+        if group not in grouped_channels:
+            grouped_channels[group] = []
+        grouped_channels[group].append(channel)
+
+    return jsonify({'grouped_channels': [{'group': group, 'channels': channels} for group, channels in grouped_channels.items()]})
+    
 
 # Start the keep-alive thread when the Flask app starts
 if __name__ == "__main__":
     threading.Thread(target=keep_alive_task, daemon=True).start()
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)
+    

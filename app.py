@@ -403,7 +403,7 @@ def index():
             grouped_channels[group] = []
         grouped_channels[group].append(channel)
     
-    return render_template('index.html', m3u_urls=m3u_urls, grouped_channels=grouped_channels, selected_link=selected_link)
+    return render_template('channels.html', m3u_urls=m3u_urls, grouped_channels=grouped_channels, selected_link=selected_link)
 
 # Route to load a specific channel
 @app.route('/channel/<link_name>/<channel_name>')
@@ -450,4 +450,3 @@ def fetch_channels(link_name):
 if __name__ == "__main__":
     threading.Thread(target=keep_alive_task, daemon=True).start()
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)
-    

@@ -364,8 +364,8 @@ def resend_reset_code():
 # Multiple M3U URLs
 m3u_urls = {
     "Link 1": "https://raw.githubusercontent.com/FunctionError/PiratesTv/main/combined_playlist.m3u",
-    "Link 2": "https://1rdk.short.gy/Himel-Op-Premium-Playlist.m3u",
-    "islamic": "https://raw.githubusercontent.com/FunctionError/PiratesTvPlus/main/PiratesPlus.m3u",
+    "Link 2": "https://raw.githubusercontent.com/shahariarmahfuz/login_page/main/Islamic.m3u",
+    "islamic": "https://raw.githubusercontent.com/shahariarmahfuz/login_page/main/Islamic.m3u",
 }
 
 # Function to parse the m3u file and extract channel information

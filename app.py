@@ -61,7 +61,7 @@ def keep_alive_task():
 # Multiple M3U URLs
 m3u_urls = {
     "Link 1": "https://raw.githubusercontent.com/FunctionError/PiratesTv/main/combined_playlist.m3u",
-    "Link 2": "https://1rdk.short.gy/Himel-Op-Premium-Playlist.m3u",
+    "Link 2": "https://6e6257fc-d48a-41f6-a522-2016babc8d32-00-1xlpieb55x6xa.sisko.replit.dev/you.m3u",
 }
 
 # Function to parse the m3u file and extract channel information

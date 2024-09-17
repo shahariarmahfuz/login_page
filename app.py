@@ -3,8 +3,10 @@ import requests
 import time
 import threading
 import re
-app = Flask(__name__)
+import logging
+from urllib.parse import quote
 
+app = Flask(__name__)
 
 M3U_FILE_PATH = 'you.m3u'
 
@@ -48,39 +50,41 @@ def update_link():
 
 def get_live_stream_url(channel_id):
     try:
-        # চ্যানেলের ইউটিউব পেজের URL
+        # YouTube channel's live page URL
         channel_url = f'https://www.youtube.com/channel/{channel_id}/live'
         response = requests.get(channel_url)
         html_content = response.text
 
-        # লাইভ ভিডিও লিঙ্ক বের করার জন্য
+        # Extract live video link
         live_video_pattern = r'https://www\.youtube\.com/watch\?v=[\w-]+'
         video_urls = re.findall(live_video_pattern, html_content)
 
         if video_urls:
-            # প্রথম লাইভ ভিডিও লিঙ্কে M3U8 লিঙ্ক বের করার চেষ্টা করুন
+            # Try to get M3U8 link from the first live video
             video_url = video_urls[0]
             m3u8_url = get_m3u8_url(video_url)
             return m3u8_url
         else:
             return None
     except Exception as e:
+        logging.error(f"Error getting live stream URL: {e}")
         return None
 
 def get_m3u8_url(video_url):
     try:
-        # ভিডিও পেজের সোর্স কোড থেকে M3U8 লিঙ্ক বের করা
+        # Extract M3U8 link from video page source
         response = requests.get(video_url)
         html_content = response.text
         m3u8_pattern = r'https://manifest\.googlevideo\.com/api/manifest/hls_variant/expire.*?/file/index\.m3u8'
         m3u8_links = re.findall(m3u8_pattern, html_content)
         return m3u8_links[0] if m3u8_links else None
     except Exception as e:
+        logging.error(f"Error getting M3U8 URL: {e}")
         return None
 
 @app.route('/youtube', methods=['GET'])
 def youtube():
-    # URL প্যারামিটার থেকে চ্যানেল আইডি বের করা
+    # Extract channel ID from URL parameter
     url_id = request.args.get('id')
     if url_id and url_id.endswith('.m3u8'):
         channel_id = url_id.replace('.m3u8', '')
@@ -99,7 +103,6 @@ def youtube():
             <a href="/">Go Back</a>
         ''')
 
-
 @app.route('/get_code', methods=['GET'])
 def get_code():
     link = request.args.get('link')
@@ -108,18 +111,19 @@ def get_code():
             response = requests.get(link)
             source_code = response.text
 
-            # ইউটিউব চ্যানেল লিঙ্ক খোঁজা
+            # Find YouTube channel links
             youtube_channel_pattern = r'https://www\.youtube\.com/channel/([\w-]+)'
             youtube_links = re.findall(youtube_channel_pattern, source_code)
             
-            # ডুপ্লিকেট লিঙ্ক বাদ দেওয়া
+            # Remove duplicates
             unique_links = list(set(youtube_links))
             
-            # JSON আকারে ফলাফল প্রদান করা
+            # Return results in JSON format
             return jsonify({
                 'youtube_channel_ids': unique_links
             })
         except Exception as e:
+            logging.error(f"Error fetching the source code: {e}")
             return jsonify({
                 'error': 'Error fetching the source code.'
             }), 500
@@ -128,86 +132,84 @@ def get_code():
             'error': 'Please provide a valid link.'
         }), 400
 
-# আইডি এবং চ্যানেলের নামের তালিকা
+# List of channel IDs and names
 channels = [
     "ISLAM BANGLA&UCN6sm8iHiPd0cnoUardDAnw",
     "Bangla TV&288uue2737",
     "Nd TV&828jej263"
 ]
 
-# রিকোয়েস্ট স্ট্যাটাসের জন্য একটি লিস্ট
+# Request status list
 request_status = []
 
-# নির্দিষ্ট রিকোয়েস্ট পাঠানোর ফাংশন
 def send_request(channel_name, channel_id):
     base_url_youtube = "https://dc641bf7-026f-48d9-9921-7c77ad2ee137-00-3ijnparc2238r.sisko.replit.dev/youtube?live&id="
     base_url_use = "https://dc641bf7-026f-48d9-9921-7c77ad2ee137-00-3ijnparc2238r.sisko.replit.dev/use?channel="
 
-    # প্রথম রিকোয়েস্ট পাঠানো
+    # Properly encode parameters
+    encoded_channel_name = quote(channel_name)
     youtube_link = f"{base_url_youtube}{channel_id}.m3u8"
+    logging.info(f"Requesting YouTube link: {youtube_link}")
     response = requests.get(youtube_link)
 
     if response.status_code == 200:
-        redirected_link = response.url  # প্রাপ্ত লিংক
+        redirected_link = response.url  # Get the redirected link
 
-        # দ্বিতীয় রিকোয়েস্ট পাঠানো
-        use_link = f"{base_url_use}{channel_name}&link={redirected_link}"
+        # Properly encode parameters
+        use_link = f"{base_url_use}{encoded_channel_name}&link={quote(redirected_link)}"
+        logging.info(f"Requesting use link: {use_link}")
         use_response = requests.get(use_link)
 
         if use_response.status_code == 200:
-            # সাকসেসফুল স্ট্যাটাস সংরক্ষণ
             request_status.append({
                 'channel': channel_name,
                 'id': channel_id,
                 'status': 'Success'
             })
-            print(f"Successfully sent link for {channel_name}")
+            logging.info(f"Successfully sent link for {channel_name}")
         else:
-            # ব্যর্থতার স্ট্যাটাস সংরক্ষণ
             request_status.append({
                 'channel': channel_name,
                 'id': channel_id,
                 'status': 'Failed'
             })
-            print(f"Failed to send link for {channel_name}, status code: {use_response.status_code}")
+            logging.error(f"Failed to send link for {channel_name}, status code: {use_response.status_code}")
     else:
-        # ব্যর্থতার স্ট্যাটাস সংরক্ষণ
         request_status.append({
             'channel': channel_name,
             'id': channel_id,
             'status': 'Failed'
         })
-        print(f"Failed to get redirected link for {channel_name}, status code: {response.status_code}")
+        logging.error(f"Failed to get redirected link for {channel_name}, status code: {response.status_code}")
 
-# প্রতি এক মিনিট অন্তর রিকোয়েস্ট পাঠানোর জন্য ফাংশন
+# Function to send requests every hour
 def background_task():
     while True:
         for channel_info in channels:
-            # চ্যানেলের নাম এবং আইডি আলাদা করা
+            # Split channel name and ID
             channel_name, channel_id = channel_info.split("&")
             send_request(channel_name, channel_id)
         time.sleep(3600)
 
-# প্রতি ৫ মিনিটে স্ট্যাটাস ক্লিয়ার করার ফাংশন
+# Function to clear status every 5 minutes
 def clear_status():
     while True:
-        time.sleep(300)  # ৫ মিনিট (৩০০ সেকেন্ড)
+        time.sleep(300)  # 5 minutes (300 seconds)
         request_status.clear()
-        print("Cleared request statuses")
+        logging.info("Cleared request statuses")
 
-# Flask অ্যাপের route
 @app.route('/see')
 def index():
-    # JSON হিসেবে রিকোয়েস্ট স্ট্যাটাস দেখানো
+    # Show request status as JSON
     return jsonify(request_status)
 
-# ব্যাকগ্রাউন্ড টাস্ক চালু করা
+# Start background tasks
 if __name__ == "__main__":
-    # ব্যাকগ্রাউন্ডে রিকোয়েস্ট পাঠানোর টাস্ক
+    # Background task for sending requests
     threading.Thread(target=background_task).start()
 
-    # প্রতি ৫ মিনিটে স্ট্যাটাস ক্লিয়ার করার টাস্ক
+    # Background task for clearing status
     threading.Thread(target=clear_status).start()
 
-    # Flask অ্যাপ চালানো
+    # Run the Flask app
     app.run(host='0.0.0.0', port=5000, debug=True)

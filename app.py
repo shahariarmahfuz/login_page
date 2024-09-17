@@ -86,7 +86,7 @@ def parse_m3u(m3u_url):
     return channels
 
 # Home route to show M3U options and default to the first M3U link
-@app.route('/')
+@app.route('/channel')
 def index():
     default_link = next(iter(m3u_urls.keys()))
     selected_link = request.args.get('link', default_link)

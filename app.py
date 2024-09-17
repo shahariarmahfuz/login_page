@@ -16,7 +16,7 @@ def extract_m3u8_links(html_content):
 
 def extract_script_start(html_content):
     # খোঁজা হচ্ছে '<script name="www-roboto" nonce=' দিয়ে শুরু হওয়া অংশ
-    script_pattern = r'<script name="www-roboto" nonce=.*'
+    script_pattern = r'hlsManifestUrl'
     match = re.search(script_pattern, html_content)
     
     if match:

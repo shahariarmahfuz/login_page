@@ -14,7 +14,7 @@ html_template = '''
 </head>
 <body>
     <h1>M3U8 Link Extractor</h1>
-    <form method="post">
+    <form method="get">
         <label for="url">Enter URL:</label>
         <input type="text" id="url" name="url" required>
         <button type="submit">Extract M3U8 Links</button>
@@ -35,21 +35,21 @@ html_template = '''
 
 def extract_m3u8_links(url):
     try:
-        response = requests.get(url, stream=True)
-        links = []
-        for chunk in response.iter_content(chunk_size=1024):
-            chunk_text = chunk.decode('utf-8', errors='ignore')
-            links.extend(re.findall(r'(https?://[^\s"]+\.m3u8)', chunk_text))
+        response = requests.get(url)
+        response.raise_for_status()
+        content = response.text
+        # Regular expression to find M3U8 links
+        links = re.findall(r'(https?://[^\s"]+\.m3u8)', content)
         return links
     except Exception as e:
         return str(e)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
+    url = request.args.get('url')
     links = []
     error = None
-    if request.method == 'POST':
-        url = request.form['url']
+    if url:
         links = extract_m3u8_links(url)
         if isinstance(links, str):  # If there's an error message
             error = links
@@ -57,4 +57,4 @@ def index():
     return render_template_string(html_template, links=links, error=error)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True)

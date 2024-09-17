@@ -39,12 +39,17 @@ def extract():
             # '<script name="www-roboto" nonce=' দিয়ে শুরু হওয়া অংশ খোঁজা
             script_start = extract_script_start(html_content)
             if script_start:
-                # যদি সেই অংশ পাওয়া যায়, তখন সেখান থেকে m3u8 লিঙ্কগুলো খোঁজা
+                # যদি সেই অংশ পাওয়া যায়, তখন সেই অংশ থেকেই m3u8 লিঙ্কগুলো খোঁজা
                 m3u8_links = extract_m3u8_links(script_start)
+                
+                # যদি m3u8 লিঙ্ক না পাওয়া যায়
                 if not m3u8_links:
                     return render_template_string(TEMPLATE, source_code=script_start, m3u8_links=None, error="No M3U8 links found in the provided section.")
+                
+                # যদি m3u8 লিঙ্ক পাওয়া যায়
                 return render_template_string(TEMPLATE, source_code=script_start, m3u8_links=m3u8_links, error=None)
             else:
+                # যদি '<script name="www-roboto" nonce=' অংশটি না পাওয়া যায়
                 return render_template_string(TEMPLATE, source_code=None, m3u8_links=None, error="The specified script section was not found.")
         else:
             logging.error("No URL parameter provided")

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template_string
+from flask import Flask, request, jsonify
 import requests
 import re
 
@@ -45,45 +45,12 @@ def youtube():
         m3u8_url = get_live_stream_url(channel_id)
 
         if m3u8_url:
-            return redirect(m3u8_url)
+            # m3u8 লিঙ্কটি JSON আকারে ইউজারকে দেখানো হবে
+            return jsonify({"m3u8_url": m3u8_url})
         else:
-            return render_template_string('''
-                <h1>No live stream or M3U8 link found for the provided channel ID.</h1>
-                <a href="/">Go Back</a>
-            ''')
+            return jsonify({"error": "No live stream or M3U8 link found for the provided channel ID."})
     else:
-        return render_template_string('''
-            <h1>Invalid format. Make sure the URL ends with .m3u8 and includes a valid channel ID.</h1>
-            <a href="/">Go Back</a>
-        ''')
-
-@app.route('/get_code', methods=['GET'])
-def get_code():
-    link = request.args.get('link')
-    if link:
-        try:
-            response = requests.get(link)
-            source_code = response.text
-
-            # ইউটিউব চ্যানেল লিঙ্ক খোঁজা
-            youtube_channel_pattern = r'https://www\.youtube\.com/channel/([\w-]+)'
-            youtube_links = re.findall(youtube_channel_pattern, source_code)
-            
-            # ডুপ্লিকেট লিঙ্ক বাদ দেওয়া
-            unique_links = list(set(youtube_links))
-            
-            # JSON আকারে ফলাফল প্রদান করা
-            return jsonify({
-                'youtube_channel_ids': unique_links
-            })
-        except Exception as e:
-            return jsonify({
-                'error': 'Error fetching the source code.'
-            }), 500
-    else:
-        return jsonify({
-            'error': 'Please provide a valid link.'
-        }), 400
+        return jsonify({"error": "Invalid format. Make sure the URL ends with .m3u8 and includes a valid channel ID."})
 
 @app.route('/')
 def home():
@@ -91,8 +58,6 @@ def home():
         <h1>Welcome</h1>
         <p>Use the following URL format to get the M3U8 link for a live stream:</p>
         <p>https://mywebsite.com/youtube?live&id={channel_id}.m3u8</p>
-        <p>Use the following URL format to get the YouTube channel IDs from a source URL:</p>
-        <p>https://mywebsite.com/get_code?link={source_url}</p>
     '''
 
 if __name__ == '__main__':

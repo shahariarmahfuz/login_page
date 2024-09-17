@@ -8,35 +8,48 @@ app = Flask(__name__)
 # Logging setup
 logging.basicConfig(level=logging.DEBUG)
 
-def extract_m3u8_links_near_hls_manifest(html_content):
-    # First, locate the 'hlsManifestUrl' part in the HTML content
-    hls_manifest_pattern = r'"hlsManifestUrl":"(https?://[^,\'\"\s]+\.m3u8)"'
-    match = re.search(hls_manifest_pattern, html_content)
-    
-    if match:
-        # If found, return the matched m3u8 link
-        return [match.group(1)]
-    return None
+def extract_m3u8_links_from_stream(url):
+    m3u8_pattern = re.compile(r'https://manifest\.googlevideo\.com/api/manifest/hls_variant/expire.*?/file/index\.m3u8')
+    script_pattern = re.compile(r'<script name="www-roboto" nonce=.*')
+    found_script_section = False
+    m3u8_links = []
+
+    try:
+        # Stream the content
+        with requests.get(url, stream=True) as response:
+            for chunk in response.iter_content(chunk_size=1024):
+                if not found_script_section:
+                    # Look for the script section in each chunk
+                    script_match = script_pattern.search(chunk.decode('utf-8', errors='ignore'))
+                    if script_match:
+                        found_script_section = True
+                        logging.debug("Found the script section, starting M3U8 extraction.")
+                        # Start searching for M3U8 links in the remaining part
+                        m3u8_links += m3u8_pattern.findall(chunk.decode('utf-8', errors='ignore'))
+                else:
+                    # Search for M3U8 links in subsequent chunks
+                    m3u8_links += m3u8_pattern.findall(chunk.decode('utf-8', errors='ignore'))
+
+                # Stop once we have enough m3u8 links
+                if m3u8_links:
+                    break
+
+        return m3u8_links
+
+    except Exception as e:
+        logging.error(f"Error while streaming the page: {str(e)}")
+        return []
 
 @app.route('/extract', methods=['GET'])
 def extract():
     try:
-        # Get the URL parameter from the request
         url = request.args.get('url')
         if url:
             logging.debug(f"URL received: {url}")
-            
-            # Fetch the page content from the URL
-            response = requests.get(url)
-            html_content = response.text
-
-            # Find the m3u8 link near the 'hlsManifestUrl' part
-            m3u8_links = extract_m3u8_links_near_hls_manifest(html_content)
-            
-            if m3u8_links:
-                return render_template_string(TEMPLATE, m3u8_links=m3u8_links, error=None)
-            else:
-                return render_template_string(TEMPLATE, m3u8_links=None, error="No M3U8 links found.")
+            m3u8_links = extract_m3u8_links_from_stream(url)
+            if not m3u8_links:
+                return render_template_string(TEMPLATE, m3u8_links=None, error="No M3U8 links found in the provided section.")
+            return render_template_string(TEMPLATE, m3u8_links=m3u8_links, error=None)
         else:
             logging.error("No URL parameter provided")
             return render_template_string(TEMPLATE, m3u8_links=None, error="Please provide a valid URL.")

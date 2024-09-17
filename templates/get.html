@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Source Code</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            position: relative;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        button {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s, transform 0.2s;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+        pre {
+            background: #272c34;
+            color: #e0e0e0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            text-align: left;
+            max-height: 400px;
+            margin: 20px 0;
+            white-space: pre-wrap;
+        }
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-top: 10px;
+            width: calc(100% - 24px);
+        }
+        form {
+            margin: 0 auto;
+            max-width: 500px;
+            text-align: center;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 16px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .notification {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            color: #007bff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            display: none;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            transition: opacity 0.3s ease-in-out;
+            width: 300px;
+            text-align: center;
+        }
+        .notification.show {
+            display: block;
+            opacity: 1;
+        }
+        .notification.hide {
+            opacity: 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if source_code %}
+            <h1>View Source Code</h1>
+            <button id="copyButton"><i class="fas fa-copy"></i> Copy Source</button>
+            <pre id="sourceCode">{{ source_code }}</pre>
+            <p>Lines: {{ source_code.count('\n') + 1 }}</p> 
+            <p>Words: {{ source_code | length }}</p> 
+            <a href="/get-source"><i class="fas fa-arrow-left"></i> Go Back</a>
+            <div id="notification" class="notification"><i class="fas fa-check-circle"></i> Source code copied to clipboard!</div> 
+        {% else %}
+            <h1>Get Source Code</h1>
+            <form method="get"> 
+                <label for="url">Enter URL:</label>
+                <input type="text" id="url" name="url" required>
+                <button type="submit"><i class="fas fa-search"></i> Get Source</button>
+            </form>
+            <a href="/"><i class="fas fa-home"></i> Go Back</a>
+        {% endif %}
+    </div>
+
+    <script>
+        const copyButton = document.getElementById('copyButton');
+        const sourceCode = document.getElementById('sourceCode')?.textContent;
+        const notification = document.getElementById('notification');
+
+        if (copyButton && sourceCode && notification) {
+            copyButton.addEventListener('click', () => {
+                navigator.clipboard.writeText(sourceCode)
+                    .then(() => {
+                        notification.classList.add('show');
+                        setTimeout(() => {
+                            notification.classList.remove('show');
+                        }, 3000); // Hide notification after 3 seconds
+                    })
+                    .catch(err => {
+                        console.error('Could not copy text: ', err);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

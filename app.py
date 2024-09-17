@@ -1,15 +1,12 @@
-from flask import Flask, render_template, redirect, url_for, jsonify, send_from_directory, request, redirect, render_template_string, Response
+from flask import Flask, render_template, redirect, url_for, jsonify, send_from_directory, request, render_template_string, Response
 import os
 import importlib
 import requests
 import threading
 import time
 import re
+
 app = Flask(__name__)
-
-# File to store user credentials (Removed)
-
-# Email settings (Removed)
 
 # Automatically register all blueprints from the 'blueprints' folder
 def register_blueprints(app):
@@ -55,9 +52,8 @@ def keep_alive_task():
                 print(f"Keep-alive ping failed with status code: {response.status_code}")
         except requests.exceptions.RequestException as e:
             print(f"Failed to send keep-alive ping: {e}")
-        
-        # Sleep for 5 minutes (300 seconds)
         time.sleep(300)
+
 # Multiple M3U URLs
 m3u_urls = {
     "Link 1": "https://raw.githubusercontent.com/FunctionError/PiratesTv/main/combined_playlist.m3u",
@@ -87,7 +83,7 @@ def parse_m3u(m3u_url):
 
 # Home route to show M3U options and default to the first M3U link
 @app.route('/channel')
-def index():
+def home_channel():
     default_link = next(iter(m3u_urls.keys()))
     selected_link = request.args.get('link', default_link)
     
@@ -142,6 +138,7 @@ def fetch_channels(link_name):
         grouped_channels[group].append(channel)
 
     return jsonify({'grouped_channels': [{'group': group, 'channels': channels} for group, channels in grouped_channels.items()]})
+
 # Start the keep-alive thread when the Flask app starts
 @app.route('/source', methods=['GET'])
 def get_source():
@@ -156,7 +153,6 @@ def get_source():
     else:
         return render_template('get.html')
         
-
 M3U_FILE_PATH = 'you.m3u'
 
 def read_m3u_file():
@@ -250,7 +246,6 @@ def youtube():
             <a href="/">Go Back</a>
         ''')
 
-
 @app.route('/get_code', methods=['GET'])
 def get_code():
     link = request.args.get('link')
@@ -339,28 +334,26 @@ def background_task():
             send_request(channel_name, channel_id)
         time.sleep(3600)
 
-# প্রতি ৫ মিনিটে স্ট্যাটাস ক্লিয়ার করার ফাংশন
+# প্রতি ৩০ মিনিটে স্ট্যাটাস ক্লিয়ার করার ফাংশন
 def clear_status():
     while True:
-        time.sleep(1800)  # ৫ মিনিট (৩০০ সেকেন্ড)
+        time.sleep(1800)  # ৩০ মিনিট (১৮০০ সেকেন্ড)
         request_status.clear()
         print("Cleared request statuses")
 
 # Flask অ্যাপের route
 @app.route('/see')
-def index():
+def see_status():
     # JSON হিসেবে রিকোয়েস্ট স্ট্যাটাস দেখানো
     return jsonify(request_status)
 
-    
-       
 if __name__ == "__main__":
-
-  # ব্যাকগ্রাউন্ডে রিকোয়েস্ট পাঠানোর টাস্ক
+    # ব্যাকগ্রাউন্ডে রিকোয়েস্ট পাঠানোর টাস্ক
     threading.Thread(target=background_task).start()
 
-    # প্রতি ৫ মিনিটে স্ট্যাটাস ক্লিয়ার করার টাস্ক
+    # প্রতি ৩০ মিনিটে স্ট্যাটাস ক্লিয়ার করার টাস্ক
     threading.Thread(target=clear_status).start()
-        # Flask অ্যাপ চালানো
+
+    # Flask অ্যাপ চালানো
     threading.Thread(target=keep_alive_task, daemon=True).start()
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)

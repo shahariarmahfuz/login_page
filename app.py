@@ -3,6 +3,8 @@ import requests
 import re
 import logging
 import os
+import threading
+import time
 
 app = Flask(__name__)
 
@@ -15,25 +17,13 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def extract_m3u8_links_from_file(filepath):
     m3u8_pattern = re.compile(r'https://manifest\.googlevideo\.com/api/manifest/hls_variant/expire.*?/file/index\.m3u8')
-    script_pattern = re.compile(r'<script name="www-roboto" nonce=.*')
-
-    found_script_section = False
     m3u8_links = []
 
     try:
         with open(filepath, 'r', encoding='utf-8') as file:
             for line in file:
-                if not found_script_section:
-                    # Look for the script section
-                    script_match = script_pattern.search(line)
-                    if script_match:
-                        found_script_section = True
-                        logging.debug("Found the script section, starting M3U8 extraction.")
-                        # Search for M3U8 links
-                        m3u8_links += m3u8_pattern.findall(line)
-                else:
-                    # Search for M3U8 links in subsequent lines
-                    m3u8_links += m3u8_pattern.findall(line)
+                # Search for M3U8 links in the file line by line
+                m3u8_links += m3u8_pattern.findall(line)
 
         return m3u8_links
 
@@ -57,6 +47,17 @@ def download_file_from_url(url):
         logging.error(f"Error while downloading the file: {str(e)}")
         return None
 
+def delete_file_after_delay(filepath, delay=120):
+    """
+    Delete the specified file after a delay.
+    """
+    time.sleep(delay)
+    try:
+        os.remove(filepath)
+        logging.debug(f"Deleted file after delay: {filepath}")
+    except Exception as e:
+        logging.error(f"Error while deleting the file: {str(e)}")
+
 @app.route('/extract', methods=['GET'])
 def extract():
     try:
@@ -70,9 +71,8 @@ def extract():
                 # Extract M3U8 links from the downloaded file
                 m3u8_links = extract_m3u8_links_from_file(filepath)
                 
-                # Delete the file after processing
-                os.remove(filepath)
-                logging.debug(f"Deleted downloaded file: {filepath}")
+                # Start a background thread to delete the file after 2 minutes
+                threading.Thread(target=delete_file_after_delay, args=(filepath, 120)).start()
                 
                 if not m3u8_links:
                     return render_template_string(TEMPLATE, m3u8_links=None, error="No M3U8 links found.")

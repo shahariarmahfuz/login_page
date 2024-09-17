@@ -15,13 +15,13 @@ def extract_m3u8_links(html_content):
     return m3u8_links
 
 def extract_script_start(html_content):
-    # খোঁজা হচ্ছে '<script name="www-roboto" nonce=' দিয়ে শুরু হওয়া অংশ
-    script_pattern = r'hlsManifestUrl'
+    # 'hlsManifestUrl' থেকে শুরু করে প্রথম '.m3u8' পর্যন্ত অংশ খুঁজে বের করার জন্য regex প্যাটার্ন
+    script_pattern = r'hlsManifestUrl.*?\.m3u8' 
     match = re.search(script_pattern, html_content)
-    
+
     if match:
-        # যদি মেলে, তখন যেখান থেকে মিলেছে, সেই স্থান থেকে সম্পূর্ণ বাকি সোর্স ফেরত দেবে
-        return html_content[match.start():]
+        # যদি মেলে তাহলে সেই অংশটুকু ফেরত দিন
+        return match.group(0) 
     return None
 
 @app.route('/extract', methods=['GET'])
@@ -36,20 +36,20 @@ def extract():
             response = requests.get(url)
             html_content = response.text
 
-            # '<script name="www-roboto" nonce=' দিয়ে শুরু হওয়া অংশ খোঁজা
+            # '<script name="www-roboto" nonce=' দিয়ে শুরু হওয়া অংশ খোঁজা
             script_start = extract_script_start(html_content)
             if script_start:
-                # যদি সেই অংশ পাওয়া যায়, তখন সেই অংশ থেকেই m3u8 লিঙ্কগুলো খোঁজা
+                # যদি সেই অংশ পাওয়া যায়, তখন সেই অংশ থেকেই m3u8 লিঙ্কগুলো খোঁজা
                 m3u8_links = extract_m3u8_links(script_start)
                 
-                # যদি m3u8 লিঙ্ক না পাওয়া যায়
+                # যদি m3u8 লিঙ্ক না পাওয়া যায়
                 if not m3u8_links:
                     return render_template_string(TEMPLATE, source_code=script_start, m3u8_links=None, error="No M3U8 links found in the provided section.")
                 
-                # যদি m3u8 লিঙ্ক পাওয়া যায়
+                # যদি m3u8 লিঙ্ক পাওয়া যায়
                 return render_template_string(TEMPLATE, source_code=script_start, m3u8_links=m3u8_links, error=None)
             else:
-                # যদি '<script name="www-roboto" nonce=' অংশটি না পাওয়া যায়
+                # যদি '<script name="www-roboto" nonce=' অংশটি না পাওয়া যায়
                 return render_template_string(TEMPLATE, source_code=None, m3u8_links=None, error="The specified script section was not found.")
         else:
             logging.error("No URL parameter provided")

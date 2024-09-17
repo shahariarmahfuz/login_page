@@ -143,7 +143,19 @@ def fetch_channels(link_name):
 
     return jsonify({'grouped_channels': [{'group': group, 'channels': channels} for group, channels in grouped_channels.items()]})
 # Start the keep-alive thread when the Flask app starts
-
+@app.route('/source', methods=['GET'])
+def get_source():
+    url = request.args.get('url')  # GET method using request.args
+    if url:
+        try:
+            response = requests.get(url)
+            source_code = response.text
+            return render_template('get.html', source_code=source_code)
+        except Exception as e:
+            return "Error fetching the source code."
+    else:
+        return render_template('get.html')
+        
 if __name__ == "__main__":
     threading.Thread(target=keep_alive_task, daemon=True).start()
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)

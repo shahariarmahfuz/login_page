@@ -57,7 +57,7 @@ def keep_alive_task():
 # Multiple M3U URLs
 m3u_urls = {
     "Link 1": "https://raw.githubusercontent.com/FunctionError/PiratesTv/main/combined_playlist.m3u",
-    "Link 2": "https://6e6257fc-d48a-41f6-a522-2016babc8d32-00-1xlpieb55x6xa.sisko.replit.dev/you.m3u",
+    "Link 2": "https://nekotools.onrender.com/you.m3u",
 }
 
 # Function to parse the m3u file and extract channel information
@@ -277,9 +277,10 @@ def get_code():
 
 # আইডি এবং চ্যানেলের নামের তালিকা
 channels = [
-    "ISLAM BANGLA&UCN6sm8iHiPd0cnoUardDAnw",
-    "Bangla TV&288uue2737",
-    "Nd TV&828jej263"
+    "RTV NEWS&UC2P5Fd5g41Gtdqf0Uzh8Qaw",
+    "JAMUNA&UCN6sm8iHiPd0cnoUardDAnw",
+    "ATN&UC9Rgo0CrNyd7OWliLekqqGA",
+"MADANI&UC0AMtPKwU61uDs--L04_kfQ"
 ]
 
 # রিকোয়েস্ট স্ট্যাটাসের জন্য একটি লিস্ট
@@ -287,8 +288,8 @@ request_status = []
 
 # নির্দিষ্ট রিকোয়েস্ট পাঠানোর ফাংশন
 def send_request(channel_name, channel_id):
-    base_url_youtube = "https://dc641bf7-026f-48d9-9921-7c77ad2ee137-00-3ijnparc2238r.sisko.replit.dev/youtube?live&id="
-    base_url_use = "https://dc641bf7-026f-48d9-9921-7c77ad2ee137-00-3ijnparc2238r.sisko.replit.dev/use?channel="
+    base_url_youtube = "https://d14bc004-3997-4fef-80f3-7e572a2cec1d-00-2c5tagtmxekol.pike.replit.dev/youtube?live&id="
+    base_url_use = "https://nekotools.onrender.com/use?channel="
 
     # প্রথম রিকোয়েস্ট পাঠানো
     youtube_link = f"{base_url_youtube}{channel_id}.m3u8"

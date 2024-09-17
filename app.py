@@ -2,43 +2,60 @@ from flask import Flask, request, render_template_string
 import requests
 import re
 import logging
+import os
 
 app = Flask(__name__)
 
 # Logging setup
 logging.basicConfig(level=logging.DEBUG)
 
-def extract_m3u8_links_from_stream(url):
+UPLOAD_FOLDER = 'downloads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def extract_m3u8_links_from_file(filepath):
     m3u8_pattern = re.compile(r'https://manifest\.googlevideo\.com/api/manifest/hls_variant/expire.*?/file/index\.m3u8')
     script_pattern = re.compile(r'<script name="www-roboto" nonce=.*')
+
     found_script_section = False
     m3u8_links = []
 
     try:
-        # Stream the content
-        with requests.get(url, stream=True) as response:
-            for chunk in response.iter_content(chunk_size=1024):
+        with open(filepath, 'r', encoding='utf-8') as file:
+            for line in file:
                 if not found_script_section:
-                    # Look for the script section in each chunk
-                    script_match = script_pattern.search(chunk.decode('utf-8', errors='ignore'))
+                    # Look for the script section
+                    script_match = script_pattern.search(line)
                     if script_match:
                         found_script_section = True
                         logging.debug("Found the script section, starting M3U8 extraction.")
-                        # Start searching for M3U8 links in the remaining part
-                        m3u8_links += m3u8_pattern.findall(chunk.decode('utf-8', errors='ignore'))
+                        # Search for M3U8 links
+                        m3u8_links += m3u8_pattern.findall(line)
                 else:
-                    # Search for M3U8 links in subsequent chunks
-                    m3u8_links += m3u8_pattern.findall(chunk.decode('utf-8', errors='ignore'))
-
-                # Stop once we have enough m3u8 links
-                if m3u8_links:
-                    break
+                    # Search for M3U8 links in subsequent lines
+                    m3u8_links += m3u8_pattern.findall(line)
 
         return m3u8_links
 
     except Exception as e:
-        logging.error(f"Error while streaming the page: {str(e)}")
+        logging.error(f"Error while reading the file: {str(e)}")
         return []
+
+def download_file_from_url(url):
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            filename = os.path.join(app.config['UPLOAD_FOLDER'], 'downloaded_file.html')
+            with open(filename, 'w', encoding='utf-8') as file:
+                file.write(response.text)
+            logging.debug(f"File downloaded successfully from {url}")
+            return filename
+        else:
+            logging.error(f"Failed to download file: {response.status_code}")
+            return None
+    except Exception as e:
+        logging.error(f"Error while downloading the file: {str(e)}")
+        return None
 
 @app.route('/extract', methods=['GET'])
 def extract():
@@ -46,10 +63,22 @@ def extract():
         url = request.args.get('url')
         if url:
             logging.debug(f"URL received: {url}")
-            m3u8_links = extract_m3u8_links_from_stream(url)
-            if not m3u8_links:
-                return render_template_string(TEMPLATE, m3u8_links=None, error="No M3U8 links found in the provided section.")
-            return render_template_string(TEMPLATE, m3u8_links=m3u8_links, error=None)
+            
+            # Download the file from the given URL
+            filepath = download_file_from_url(url)
+            if filepath:
+                # Extract M3U8 links from the downloaded file
+                m3u8_links = extract_m3u8_links_from_file(filepath)
+                
+                # Delete the file after processing
+                os.remove(filepath)
+                logging.debug(f"Deleted downloaded file: {filepath}")
+                
+                if not m3u8_links:
+                    return render_template_string(TEMPLATE, m3u8_links=None, error="No M3U8 links found.")
+                return render_template_string(TEMPLATE, m3u8_links=m3u8_links, error=None)
+            else:
+                return render_template_string(TEMPLATE, m3u8_links=None, error="Failed to download the file.")
         else:
             logging.error("No URL parameter provided")
             return render_template_string(TEMPLATE, m3u8_links=None, error="Please provide a valid URL.")

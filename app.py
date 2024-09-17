@@ -9,43 +9,26 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 def extract_m3u8_links(html_content):
-    try:
-        # সোর্স কোড থেকে m3u8 লিঙ্ক বের করার প্যাটার্ন
-        m3u8_pattern = r'(https?://[^,\'\"\s]+\.m3u8)'
-        m3u8_links = re.findall(m3u8_pattern, html_content)
+    # সোর্স কোড থেকে m3u8 লিঙ্ক বের করার প্যাটার্ন
+    m3u8_pattern = r'(https?://[^,\'\"\s]+\.m3u8)'
+    m3u8_links = re.findall(m3u8_pattern, html_content)
+    return m3u8_links
 
-        if m3u8_links:
-            logging.debug(f"M3U8 links extracted: {m3u8_links}")
-        else:
-            logging.error(f"No M3U8 links found in the page")
-        
-        return m3u8_links if m3u8_links else []
-    except Exception as e:
-        logging.error(f"Error in extract_m3u8_links: {str(e)}")
-        return []
-
-def extract_partial_source(html_content, marker):
-    # নির্দিষ্ট মার্কারের লাইনটি খুঁজে বের করা এবং তার পরবর্তী অংশ নেওয়া
-    try:
-        index = html_content.find(marker)
-        if index != -1:
-            logging.debug(f"Marker found at position: {index}")
-            # মার্কারের পরে সবকিছু দেখানো হবে
-            return html_content[index:]
-        else:
-            logging.error(f"Marker '{marker}' not found in the source code.")
-            return None
-    except Exception as e:
-        logging.error(f"Error in extract_partial_source: {str(e)}")
-        return None
+def extract_script_start(html_content):
+    # খোঁজা হচ্ছে '<script name="www-roboto" nonce=' দিয়ে শুরু হওয়া অংশ
+    script_pattern = r'<script name="www-roboto" nonce=.*'
+    match = re.search(script_pattern, html_content)
+    
+    if match:
+        # যদি মেলে, তখন যেখান থেকে মিলেছে, সেই স্থান থেকে সম্পূর্ণ বাকি সোর্স ফেরত দেবে
+        return html_content[match.start():]
+    return None
 
 @app.route('/extract', methods=['GET'])
 def extract():
     try:
-        # ইউজারের ইনপুট URL এবং মার্কার গ্রহণ করা
+        # ইউজারের ইনপুট URL গ্রহণ করা
         url = request.args.get('url')
-        marker = request.args.get('marker', '<script name="www-roboto" nonce=')  # ডিফল্ট মার্কার
-
         if url:
             logging.debug(f"URL received: {url}")
             
@@ -53,13 +36,16 @@ def extract():
             response = requests.get(url)
             html_content = response.text
 
-            # সোর্স কোড থেকে নির্দিষ্ট মার্কার খুঁজে তার পরের অংশ বের করা
-            partial_source = extract_partial_source(html_content, marker)
-
-            # সোর্স কোড থেকে m3u8 লিঙ্কগুলো বের করা
-            m3u8_links = extract_m3u8_links(html_content)
-
-            return render_template_string(TEMPLATE, source_code=partial_source, m3u8_links=m3u8_links, error=None)
+            # '<script name="www-roboto" nonce=' দিয়ে শুরু হওয়া অংশ খোঁজা
+            script_start = extract_script_start(html_content)
+            if script_start:
+                # যদি সেই অংশ পাওয়া যায়, তখন সেখান থেকে m3u8 লিঙ্কগুলো খোঁজা
+                m3u8_links = extract_m3u8_links(script_start)
+                if not m3u8_links:
+                    return render_template_string(TEMPLATE, source_code=script_start, m3u8_links=None, error="No M3U8 links found in the provided section.")
+                return render_template_string(TEMPLATE, source_code=script_start, m3u8_links=m3u8_links, error=None)
+            else:
+                return render_template_string(TEMPLATE, source_code=None, m3u8_links=None, error="The specified script section was not found.")
         else:
             logging.error("No URL parameter provided")
             return render_template_string(TEMPLATE, source_code=None, m3u8_links=None, error="Please provide a valid URL.")
@@ -85,15 +71,11 @@ TEMPLATE = '''
     <form action="/extract" method="GET">
         <label for="url">Enter the Website URL:</label>
         <input type="text" id="url" name="url" required>
-        
-        <label for="marker">Enter the Marker (optional):</label>
-        <input type="text" id="marker" name="marker" value="<script name='www-roboto' nonce=">
-
         <button type="submit">Extract M3U8 Links</button>
     </form>
 
     {% if source_code %}
-        <h2>Partial Page Source Code:</h2>
+        <h2>Filtered Source Code (after script tag):</h2>
         <pre>{{ source_code }}</pre>
     {% endif %}
 

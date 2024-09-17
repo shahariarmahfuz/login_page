@@ -1,64 +1,92 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, render_template_string
 import requests
 import re
+import logging
 
 app = Flask(__name__)
 
-def get_live_stream_url(channel_id):
+# লগিং সেটআপ করা
+logging.basicConfig(level=logging.DEBUG)
+
+def extract_m3u8_links(url):
     try:
-        # চ্যানেলের ইউটিউব পেজের URL
-        channel_url = f'https://www.youtube.com/channel/{channel_id}/live'
-        response = requests.get(channel_url)
-        source_code = response.text
+        # ইউজার প্রদত্ত URL থেকে পেজের সোর্স কোড ডাউনলোড করা
+        logging.debug(f"Fetching URL: {url}")
+        response = requests.get(url)
+        html_content = response.text
 
-        # লাইভ ভিডিও লিঙ্ক বের করার জন্য
-        live_video_pattern = r'https://www\.youtube\.com/watch\?v=[\w-]+'
-        video_urls = re.findall(live_video_pattern, source_code)
+        # সোর্স কোড থেকে m3u8 লিঙ্ক বের করার প্যাটার্ন
+        m3u8_pattern = r'(https?://[^,\'\"\s]+\.m3u8)'
+        m3u8_links = re.findall(m3u8_pattern, html_content)
 
-        if video_urls:
-            # প্রথম লাইভ ভিডিও লিঙ্কে M3U8 লিঙ্ক বের করার চেষ্টা করুন
-            video_url = video_urls[0]
-            m3u8_url = get_m3u8_url(video_url)
-            return m3u8_url
+        if m3u8_links:
+            logging.debug(f"M3U8 links extracted: {m3u8_links}")
         else:
-            return None
+            logging.error(f"No M3U8 links found in the page: {url}")
+        
+        return m3u8_links if m3u8_links else None
     except Exception as e:
+        logging.error(f"Error in extract_m3u8_links: {str(e)}")
         return None
 
-def get_m3u8_url(video_url):
+@app.route('/extract', methods=['POST'])
+def extract():
     try:
-        # ভিডিও পেজের সোর্স কোড থেকে M3U8 লিঙ্ক বের করা
-        response = requests.get(video_url)
-        source_code = response.text
-        m3u8_pattern = r'https://manifest\.googlevideo\.com/api/manifest/hls_variant/expire.*?/file/index\.m3u8'
-        m3u8_links = re.findall(m3u8_pattern, source_code)
-        return m3u8_links[0] if m3u8_links else None
-    except Exception as e:
-        return None
+        # ফর্ম থেকে ইউজারের ইনপুট URL নেয়া
+        url = request.form.get('url')
+        if url:
+            logging.debug(f"URL received: {url}")
+            
+            # URL থেকে m3u8 লিঙ্কগুলো বের করা
+            m3u8_links = extract_m3u8_links(url)
 
-@app.route('/youtube', methods=['GET'])
-def youtube():
-    # URL প্যারামিটার থেকে চ্যানেল আইডি বের করা
-    url_id = request.args.get('id')
-    if url_id and url_id.endswith('.m3u8'):
-        channel_id = url_id.replace('.m3u8', '')
-        m3u8_url = get_live_stream_url(channel_id)
-
-        if m3u8_url:
-            # m3u8 লিঙ্কটি JSON আকারে ইউজারকে দেখানো হবে
-            return jsonify({"m3u8_url": m3u8_url})
+            if m3u8_links:
+                return render_template_string(TEMPLATE, m3u8_links=m3u8_links, error=None)
+            else:
+                logging.error(f"No M3U8 links found for URL: {url}")
+                return render_template_string(TEMPLATE, m3u8_links=None, error="No M3U8 links found in the provided URL.")
         else:
-            return jsonify({"error": "No live stream or M3U8 link found for the provided channel ID."})
-    else:
-        return jsonify({"error": "Invalid format. Make sure the URL ends with .m3u8 and includes a valid channel ID."})
+            logging.error("No URL parameter provided")
+            return render_template_string(TEMPLATE, m3u8_links=None, error="Please provide a valid URL.")
+    except Exception as e:
+        logging.error(f"Error in /extract route: {str(e)}")
+        return render_template_string(TEMPLATE, m3u8_links=None, error="An error occurred while processing the request.")
 
 @app.route('/')
 def home():
-    return '''
-        <h1>Welcome</h1>
-        <p>Use the following URL format to get the M3U8 link for a live stream:</p>
-        <p>https://mywebsite.com/youtube?live&id={channel_id}.m3u8</p>
-    '''
+    return render_template_string(TEMPLATE, m3u8_links=None, error=None)
+
+# HTML টেমপ্লেট তৈরি করা
+TEMPLATE = '''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M3U8 Link Extractor</title>
+</head>
+<body>
+    <h1>M3U8 Link Extractor</h1>
+    <form action="/extract" method="POST">
+        <label for="url">Enter the Website URL:</label>
+        <input type="text" id="url" name="url" required>
+        <button type="submit">Extract M3U8 Links</button>
+    </form>
+
+    {% if m3u8_links %}
+        <h2>Found M3U8 Links:</h2>
+        <ul>
+        {% for link in m3u8_links %}
+            <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
+        {% endfor %}
+        </ul>
+    {% elif error %}
+        <h2>Error:</h2>
+        <p>{{ error }}</p>
+    {% endif %}
+</body>
+</html>
+'''
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

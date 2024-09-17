@@ -35,11 +35,18 @@ html_template = '''
 
 def extract_m3u8_links(url):
     try:
-        response = requests.get(url)
+        # Perform a streaming GET request to handle large content
+        response = requests.get(url, stream=True)
         response.raise_for_status()
-        content = response.text
-        # Regular expression to find M3U8 links
-        links = re.findall(r'(https?://[^\s"]+\.m3u8)', content)
+        links = []
+        buffer = ''
+        for chunk in response.iter_content(chunk_size=2048):
+            buffer += chunk.decode('utf-8', errors='ignore')
+            # Search within the buffer for M3U8 links
+            links.extend(re.findall(r'(https?://[^\s"]+\.m3u8)', buffer))
+            # Reset buffer if it gets too large
+            if len(buffer) > 10_000:  # Adjust size as necessary
+                buffer = ''
         return links
     except Exception as e:
         return str(e)
@@ -57,4 +64,4 @@ def index():
     return render_template_string(html_template, links=links, error=error)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

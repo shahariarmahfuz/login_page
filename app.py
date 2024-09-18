@@ -7,7 +7,7 @@ import time
 import re
 
 app = Flask(__name__)
-
+app.secret_key = 'your_secret_key'
 # Automatically register all blueprints from the 'blueprints' folder
 def register_blueprints(app):
     blueprints_dir = os.path.join(os.path.dirname(__file__), 'blueprints')

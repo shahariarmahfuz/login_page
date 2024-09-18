@@ -1,10 +1,12 @@
-from flask import Flask, render_template, redirect, url_for, jsonify, send_from_directory, request, render_template_string, Response
+from flask import Flask, render_template, redirect, url_for, jsonify, send_from_directory, request, render_template_string, Response, session
 import os
 import importlib
 import requests
 import threading
 import time
 import re
+import random
+import string
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -351,6 +353,73 @@ def clear_status():
 def see_status():
     # JSON হিসেবে রিকোয়েস্ট স্ট্যাটাস দেখানো
     return jsonify(request_status)
+
+user_requests = {}
+
+# Function to generate random ID
+def generate_random_id():
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+
+# Home route to render the HTML form
+@app.route('/translate')
+def translate():
+    # Check if the user has an ID in the session
+    if 'user_id' not in session:
+        session['user_id'] = generate_random_id()
+
+    unique_id = session['user_id']
+    translate_option = request.args.get('translate_option', '')
+    translated_text = ''
+    user_text = ''
+
+    if unique_id in user_requests:
+        # Retrieve the user text from the storage
+        user_text = user_requests.get(unique_id, {}).get('text', '')
+        translate_option = user_requests.get(unique_id, {}).get('translate_option', '')
+
+        if user_text and translate_option:
+            # Map the translation option to the correct API endpoint
+            api_urls = {
+                'Bangla to Banglish': f"https://symmetrical-octo-potato.vercel.app/ask?q={user_text}&id={generate_random_id()}",
+                'Any to Hinglish': f"https://symmetrical-octo-potato.vercel.app/hi?q={user_text}&id={generate_random_id()}",
+                'Any to English': f"https://symmetrical-octo-potato.vercel.app/en?q={user_text}&id={generate_random_id()}",
+                'Any to Bangla': f"https://symmetrical-octo-potato.vercel.app/bn?q={user_text}&id={generate_random_id()}"
+            }
+
+            # Get the API URL based on user selection
+            api_url = api_urls.get(translate_option)
+
+            # Make the API request
+            response = requests.get(api_url)
+            translated_text = response.json().get('response', 'Translation not available')
+
+        # Remove the request data after processing
+        # Once the text is translated and shown, we remove the user data from the server
+        user_requests.pop(unique_id, None)
+
+    return render_template('translator.html', translated_text=translated_text, user_text=user_text, translate_option=translate_option, user_id=unique_id)
+
+# Route to handle form submission
+@app.route('/submit', methods=['GET'])
+def submit():
+    user_text = request.args.get('text', '')
+    translate_option = request.args.get('translate_option', '')
+
+    if user_text and translate_option:
+        unique_id = session.get('user_id')
+        user_requests[unique_id] = {
+            'text': user_text,
+            'translate_option': translate_option
+        }
+        return redirect(url_for('translate'))
+
+    return redirect(url_for('translate'))
+
+# Route to change user ID manually
+@app.route('/change_id', methods=['GET'])
+def change_id():
+    session['user_id'] = generate_random_id()
+    return redirect(url_for('translate'))
 
 if __name__ == "__main__":
     # ব্যাকগ্রাউন্ডে রিকোয়েস্ট পাঠানোর টাস্ক

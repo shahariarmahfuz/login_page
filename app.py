@@ -330,10 +330,13 @@ def send_request(channel_name, channel_id):
 # প্রতি এক মিনিট অন্তর রিকোয়েস্ট পাঠানোর জন্য ফাংশন
 def background_task():
     while True:
-        for channel_info in channels:
+        for i, channel_info in enumerate(channels):
             # চ্যানেলের নাম এবং আইডি আলাদা করা
             channel_name, channel_id = channel_info.split("&")
             send_request(channel_name, channel_id)
+            # চ্যানেলের জন্য ১৫ সেকেন্ড অপেক্ষা করুন
+            time.sleep(15)
+        # সব চ্যানেল একবার আপডেট করার পরে ১ ঘণ্টা অপেক্ষা করুন
         time.sleep(3600)
 
 # প্রতি ৩০ মিনিটে স্ট্যাটাস ক্লিয়ার করার ফাংশন

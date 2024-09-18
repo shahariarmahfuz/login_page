@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Raleway', sans-serif;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9)), url('https://via.placeholder.com/1920x1080');
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: auto;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            max-width: 700px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid #ddd;
+            animation: fadeIn 1s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #007bff;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .form-container {
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        select, textarea, input[type="submit"] {
+            width: calc(100% - 24px);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            font-size: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+            font-family: 'Raleway', sans-serif;
+        }
+
+        select:focus, textarea:focus, input[type="submit"]:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 6px 12px rgba(0, 123, 255, 0.2);
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        #translated-text {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        #copy-button {
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease, transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        #copy-button:hover {
+            background-color: #219150;
+            transform: translateY(-2px);
+        }
+
+        #copy-success {
+            color: #fff;
+            background: linear-gradient(45deg, #ff4b2b, #ff416c);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            display: none;
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+            z-index: 10;
+            animation: fadeInOut 3s ease;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .change-id-section {
+            margin-top: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .change-id-section p {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .change-id-section button {
+            background-color: #ff6f61;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: background 0.3s ease, transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 auto;
+        }
+
+        .change-id-section button i {
+            font-size: 16px;
+        }
+
+        .change-id-section button:hover {
+            background-color: #e65a50;
+            transform: translateY(-1px);
+        }
+
+        .alert-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .alert-message i {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-language icon-container"></i> Text Translator</h1>
+
+        <div class="form-container">
+            <form method="GET" action="/submit">
+                <label for="translate_option"><i class="fas fa-globe-asia icon-container"></i> Choose Translation Option:</label>
+                <select id="translate_option" name="translate_option" required>
+                    <option value="">--Select Option--</option>
+                    <option value="Bangla to Banglish" {% if translate_option == 'Bangla to Banglish' %}selected{% endif %}>Bangla to Banglish</option>
+                    <option value="Any to Hinglish" {% if translate_option == 'Any to Hinglish' %}selected{% endif %}>Any to Hinglish</option>
+                    <option value="Any to English" {% if translate_option == 'Any to English' %}selected{% endif %}>Any to English</option>
+                    <option value="Any to Bangla" {% if translate_option == 'Any to Bangla' %}selected{% endif %}>Any to Bangla</option>
+                </select>
+
+                <label for="text"><i class="fas fa-pencil-alt icon-container"></i> Enter Text to Translate:</label>
+                <textarea id="text" name="text" rows="4" cols="50" required>{{ user_text if user_text else '' }}</textarea>
+
+                <input type="submit" value="Translate">
+            </form>
+        </div>
+
+        {% if translated_text %}
+            <h2><i class="fas fa-check-circle icon-container"></i> Translated Text:</h2>
+            <p id="translated-text">{{ translated_text }}</p>
+            <div style="position: relative;">
+                <button id="copy-button" onclick="copyToClipboard()"><i class="fas fa-copy icon-container"></i> Copy</button>
+                <div id="copy-success"><i class="fas fa-check"></i> Text copied!</div>
+            </div>
+        {% endif %}
+
+        <div class="change-id-section">
+            <form method="GET" action="/change_id">
+                <p>Your ID: <span class="id-display">{{ user_id }}</span></p>
+                <button type="submit"><i class="fas fa-id-badge"></i> Change ID</button>
+            </form>
+        </div>
+
+        <!-- Alert message inside container -->
+        <div class="alert-message">
+            <i class="fas fa-exclamation-triangle"></i> If any translation is incorrect, please change your ID. Since this is AI-based, errors may occur.
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard() {
+            const text = document.getElementById('translated-text').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const successMessage = document.getElementById('copy-success');
+                successMessage.style.display = 'block';
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            });
+        }
+    </script>
+</body>
+</html>

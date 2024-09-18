@@ -288,7 +288,7 @@ request_status = []
 
 # নির্দিষ্ট রিকোয়েস্ট পাঠানোর ফাংশন
 def send_request(channel_name, channel_id):
-    base_url_youtube = "https://d14bc004-3997-4fef-80f3-7e572a2cec1d-00-2c5tagtmxekol.pike.replit.dev/youtube?live&id="
+    base_url_youtube = "https://psychic-succotash-three.vercel.app/youtube?live&id="
     base_url_use = "https://nekotools.onrender.com/use?channel="
 
     # প্রথম রিকোয়েস্ট পাঠানো

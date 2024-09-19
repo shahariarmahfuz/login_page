@@ -8,217 +8,243 @@
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            font-family: 'Raleway', sans-serif;
-            margin: 0;
-            background-color: #f5f5f5; /* Premium white background */
-            position: relative; /* Ensure body is positioned relative for the menu button */
-            overflow-x: hidden; /* Prevent horizontal scrolling */
-        }
-        .container {
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            max-width: 90%; /* Adjusted to fit better on various screens */
-            margin: 20px auto; /* Centered container */
-            box-sizing: border-box;
-            border: 1px solid #e0e0e0; /* Light border to enhance container */
-        }
-        h1 {
-            margin-top: 0;
-            font-size: 28px;
-            color: #333;
-            text-align: center;
-        }
-        .detail {
-            margin: 15px 0;
-            border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 10px;
-        }
-        .label {
-            font-weight: bold;
-            color: #333;
-            display: inline-block;
-            width: 200px;
-        }
-        .value {
-            color: #555;
-            display: inline-block;
-        }
-        .footer {
-            margin-top: 20px;
-            text-align: center;
-            color: #666;
-            font-size: 14px;
-        }
+body {
+    font-family: 'Raleway', sans-serif;
+    margin: 0;
+    background-color: #f5f5f5;
+    position: relative;
+    overflow-x: hidden;
+}
 
-        /* Menu Button Styling */
-        .menu-btn {
-            font-size: 20px; 
-            background: linear-gradient(145deg, #007bff, #00b3ff);
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            position: fixed; /* Fixed positioning for menu button */
-            top: 20px; /* Distance from top */
-            right: 20px; /* Distance from right */
-            border-radius: 50%;
-            box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
-            transition: all 0.3s ease; /* Smoother transition */
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px; 
-            height: 50px; 
-            opacity: 1;
-        }
+.container {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    max-width: 90%;
+    margin: 20px auto;
+    box-sizing: border-box;
+    border: 1px solid #e0e0e0;
+}
 
-        .menu-btn:hover {
-            background: linear-gradient(145deg, #00b3ff, #007bff);
-            transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(0, 123, 255, 0.5);
-        }
+h1 {
+    font-size: 28px;
+    color: #333;
+    text-align: center;
+}
 
-        .menu-btn i {
-            font-size: 18px; 
-        }
+.detail {
+    margin: 15px 0;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+}
 
-        /* Side Menu Styling */
-        .side-menu {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            top: 0;
-            left: 0;
-            /* Frosted glass effect */
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
-            overflow-x: hidden;
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Custom easing */
-            padding-top: 60px;
-            color: black;
-            z-index: 999;
-            transform: translateX(-100%);
-            opacity: 0;
-        }
+.label {
+    font-weight: bold;
+    color: #333;
+    display: inline-block;
+    width: 200px;
+}
 
-        .side-menu.open {
-            width: 250px; 
-            transform: translateX(0);
-            opacity: 1;
-        }
+.value {
+    color: #555;
+    display: inline-block;
+}
 
-        .side-menu a {
-            padding: 10px 15px; 
-            text-decoration: none;
-            font-size: 16px; 
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 10px; 
-            transition: background-color 0.3s ease, color 0.3s ease, padding-left 0.3s ease; /* Smoother transition */
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            font-weight: 500;
-        }
+.footer {
+    margin-top: 20px;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+}
 
-        .side-menu a:hover {
-            background-color: rgba(0, 123, 255, 0.1); /* Subtle blue tint */
-            padding-left: 30px;
-            border-radius: 8px;
-            color: #007bff;
-        }
+/* Menu Button Styling */
+.menu-btn {
+    font-size: 20px; 
+    background: linear-gradient(145deg, #007bff, #00b3ff);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    border-radius: 50%;
+    box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px; 
+    height: 50px;
+}
 
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 25px;
-            font-size: 24px; /* More elegant close button */
-            cursor: pointer;
-            color: #555;
-            transition: transform 0.3s ease, color 0.3s ease;
-        }
+.menu-btn:hover {
+    background: linear-gradient(145deg, #00b3ff, #007bff);
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 123, 255, 0.5);
+}
 
-        .close-btn:hover {
-            transform: rotate(90deg);
-            color: #007bff;
-        }
+.menu-btn i {
+    font-size: 18px; 
+}
 
-        .side-menu h2 {
-            color: #007bff;
-            padding: 0 15px; 
-            font-weight: 600;
-            margin-bottom: 20px; 
-            font-size: 20px; 
-            border-bottom: 2px solid rgba(0, 123, 255, 0.3); /* Subtle line */
-        }
+/* Side Menu Styling */
+.side-menu {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    padding-top: 60px;
+    z-index: 999;
+    transform: translateX(-100%);
+    opacity: 0;
+}
 
-        /* Smooth menu button visibility */
-        .menu-btn.hidden {
-            opacity: 0;
-            transform: scale(0); /* Scale down for smoother hide */
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
+.side-menu.open {
+    width: 250px; 
+    transform: translateX(0);
+    opacity: 1;
+}
 
-        @media screen and (max-height: 450px) {
-            .side-menu { padding-top: 15px; }
-            .side-menu a { font-size: 14px; } 
-        }
+.side-menu a {
+    padding: 8px 15px; /* মূল মেনুর টেক্সটের আকার ছোট করা হয়েছে */ 
+    text-decoration: none;
+    font-size: 15px; /* মূল মেনুর টেক্সটের আকার ছোট করা হয়েছে */
+    color: #6777f0; /* মূল মেনুর টেক্সট এবং আইকনের রঙ পরিবর্তন করা হয়েছে */
+    display: flex;
+    align-items: center;
+    gap: 8px; /* মূল মেনুর আইকন এবং টেক্সটের মধ্যে ফাঁকা জায়গা কমানো হয়েছে */
+    transition: background-color 0.3s ease, color 0.3s ease, padding-left 0.3s ease;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    font-weight: 500;
+}
 
-        /* Popup Styling */
-        /* Popup Styling */
+.side-menu a i {
+    font-size: 14px; /* মূল মেনুর আইকনের আকার ছোট করা হয়েছে */
+}
+
+.side-menu a:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+    padding-left: 30px;
+    border-radius: 8px;
+    color: #007bff;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #555;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.close-btn:hover {
+    transform: rotate(90deg);
+    color: #007bff;
+}
+
+.side-menu h2 {
+    color: #007bff;
+    padding: 0 15px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    font-size: 20px;
+    border-bottom: 2px solid rgba(0, 123, 255, 0.3);
+}
+
+/* Submenu Styling */
+.submenu {
+    display: none;
+    flex-direction: column;
+    padding-left: 30px;
+}
+
+.submenu a {
+    font-size: 14px;
+}
+
+.submenu a:hover {
+    padding-left: 40px;
+}
+
+.has-submenu > a {
+    cursor: pointer;
+}
+
+.has-submenu > a:after {
+    content: '\f078'; /* Font Awesome arrow down */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-left: auto;
+    transition: transform 0.3s ease;
+}
+
+.has-submenu.open > a:after {
+    transform: rotate(180deg); /* Rotate arrow when submenu is open */
+}
+
+.has-submenu.open .submenu {
+    display: flex;
+}
+
+/* Popup Styling */
 .popup {
-    display: none; /* Initially hidden */
+    display: none; 
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: #ffffff;
-    border-radius: 20px; /* Softer, more premium border */
+    border-radius: 20px; 
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
-    padding: 30px 40px; /* Adjusted padding for more box-like appearance */
-    max-width: 250px; /* Defined width */
-    max-height: 300px; /* Defined height to avoid being too tall */
+    padding: 30px 40px; 
+    max-width: 250px; 
+    max-height: 300px; 
     width: 100%;
     height: auto;
     z-index: 2000;
     text-align: center;
     transition: opacity 0.3s ease, transform 0.3s ease;
-    opacity: 0; /* Initially hidden */
-    transform: translate(-50%, -50%) scale(0.9); /* Hidden state */
+    opacity: 0; 
+    transform: translate(-50%, -50%) scale(0.9); 
 }
 
 .popup.open {
     display: block;
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1); /* Visible state */
+    transform: translate(-50%, -50%) scale(1); 
 }
 
 .popup .icon {
-    font-size: 50px; /* Larger premium icon size */
-    color: #ff9800; /* Premium gold color for a more luxurious look */
+    font-size: 50px; 
+    color: #ff9800; 
     margin-bottom: 20px;
 }
 
 .popup h2 {
     margin: 0 0 15px 0;
     color: #333;
-    font-size: 22px; /* Slightly smaller premium title */
+    font-size: 22px; 
     font-weight: 600;
 }
 
 .popup p {
     margin: 0 0 20px 0;
-    color: #555; /* Softer text color */
+    color: #555; 
     font-size: 15px;
 }
 
 .popup .btn {
-    background: linear-gradient(145deg, #ff9800, #ffc107); /* Premium gradient with gold hues */
+    background: linear-gradient(145deg, #ff9800, #ffc107); 
     color: white;
     border: none;
     padding: 10px 20px;
@@ -230,101 +256,114 @@
 
 .popup .btn:hover {
     background: linear-gradient(145deg, #ffc107, #ff9800);
-    transform: scale(1.05); /* Slight hover effect for a premium touch */
+    transform: scale(1.05); 
 }
 
-        /* Contact Section */
-        .contact {
-            background: #fefefe;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-top: 30px;
-            text-align: center;
-        }
+/* Contact Section */
+.contact {
+    background: #fefefe;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 30px;
+    text-align: center;
+}
 
-        .contact i {
-            font-size: 24px;
-            color: #007bff;
-        }
+.contact i {
+    font-size: 24px;
+    color: #007bff;
+}
 
-        .contact p {
-            margin: 10px 0 0;
-            color: #555;
-            font-size: 16px;
-        }
+.contact p {
+    margin: 10px 0 0;
+    color: #555;
+    font-size: 16px;
+}
 
-        .contact .social-links {
-            margin-top: 15px;
-        }
+.contact .social-links {
+    margin-top: 15px;
+}
 
-        .contact .social-links a {
-            color: #007bff;
-            font-size: 24px;
-            margin: 0 10px;
-            transition: color 0.3s ease;
-        }
+.contact .social-links a {
+    color: #007bff;
+    font-size: 24px;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+}
 
-        .contact .social-links a:hover {
-            color: #0056b3;
-        }
+.contact .social-links a:hover {
+    color: #0056b3;
+}
 
-        /* Attention Bar */
-        .attention-bar {
-            background: #ffe9e9;
-            border-left: 5px solid #f44336;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            color: #f44336;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .attention-bar i {
-            font-size: 24px;
-        }
+/* Attention Bar */
+.attention-bar {
+    background: #ffe9e9;
+    border-left: 5px solid #f44336;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: #f44336;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-        .attention-bar p {
-            margin: 0;
-            font-size: 16px;
-        }
+.attention-bar i {
+    font-size: 24px;
+}
 
-        /* Responsive styling */
-        @media (max-width: 768px) {
-            .contact i {
-                font-size: 20px;
-            }
+.attention-bar p {
+    margin: 0;
+    font-size: 16px;
+}
 
-            .attention-bar i {
-                font-size: 20px;
-            }
+/* Responsive styling */
+@media (max-width: 768px) {
+    .contact i {
+        font-size: 20px;
+    }
 
-            .popup .btn {
-                padding: 8px 16px;
-                font-size: 14px;
-            }
-        }
-        
-        /* Footer Styling */
+    .attention-bar i {
+        font-size: 20px;
+    }
+
+    .popup .btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+
+/* Footer Styling */
 .footer {
-    background: #f9f9f9; /* Light background for premium look */
+    background: #f9f9f9; 
     padding: 20px 0;
     text-align: center;
-    border-top: 1px solid #ddd; /* Subtle border for clean separation */
+    border-top: 1px solid #ddd; 
     margin-top: 50px;
 }
 
 .footer p {
-    color: #333; /* Darker color for elegant text */
-    font-size: 16px; /* Slightly larger for readability */
+    color: #333; 
+    font-size: 16px; 
     margin: 0;
 }
 
 .footer p span {
-    color: #ff9800; /* Accent color to match the premium theme */
-    font-weight: 600; /* Slightly bold for emphasis */
+    color: #ff9800; 
+    font-weight: 600; 
+}
+
+/* Smooth menu button visibility */
+.menu-btn.hidden {
+    opacity: 0;
+    transform: scale(0); 
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+@media screen and (max-height: 450px) {
+    .side-menu { padding-top: 15px; }
+    .side-menu a { font-size: 14px; } 
 }
     </style>
 </head>
@@ -333,17 +372,29 @@
         <div id="sideMenu" class="side-menu">
             <span class="close-btn" onclick="closeMenu()">&times;</span>
             <h2>Menu</h2>
+
             <a href=/email><i class="fas fa-envelope"></i> Email</a>
-            <a href=/channel><i class="fas fa-tv"></i> Live</a>
-            <a href=/pas><i class="fas fa-key"></i> Password</a>
-            <a href=/lookup><i class="fas fa-map-marker-alt"></i> Ip lookup</a>
-            <a href=/source><i class="fas fa-code"></i> Source</a>
-            <a href=/age><i class="fas fa-birthday-cake"></i> Age</a>
-            <a href=/><i class="fas fa-home"></i> Home</a>
+
+            <a href="/channel"><i class="fas fa-tv"></i> Live</a>
+
+            <div class="has-submenu">
+                <a href="javascript:void(0);"><i class="fas fa-key"></i> Password</a>
+                <div class="submenu">
+                    <a href="#">Change Password</a>
+                    <a href="#">Reset Password</a>
+                </div>
+            </div>
+
+            <a href="/lookup"><i class="fas fa-map-marker-alt"></i> Ip lookup</a>
+            <a href="/source"><i class="fas fa-code"></i> Source</a>
+            <a href="/age"><i class="fas fa-birthday-cake"></i> Age</a>
+            <a href="/translate"><i class="fas fa-comments icon"></i> Translator</a>
+            <a href="/"><i class="fas fa-home"></i> Home</a>
             <a href="#"><i class="fas fa-info-circle"></i> About</a>
             <a href="#"><i class="fas fa-briefcase"></i> Services</a>
             <a href="#"><i class="fas fa-phone"></i> Contact</a>
         </div>
+
         <button id="menuBtn" class="menu-btn" onclick="openMenu()">
             <i class="fas fa-bars"></i>
         </button>
@@ -363,7 +414,6 @@
         <div class="detail"><span class="label">Time:</span> <span class="value" id="time"></span></div>
         <div class="footer">Information collected in real-time</div>
 
-        <!-- Contact Section -->
         <div class="contact">
             <i class="fas fa-envelope"></i>
             <p>Contact Me</p>
@@ -376,92 +426,84 @@
             </div>
         </div>
 
-        <!-- Attention Bar -->
         <div class="attention-bar">
             <i class="fas fa-exclamation-triangle"></i>
             <p><strong>Attention:</strong> This website is created solely for assistance purposes.</p>
         </div>
     </div>
 
-    <!-- Popup Section -->
-<!-- Popup Section -->
-<div id="welcomePopup" class="popup">
-    <i class="fas fa-gem icon"></i> <!-- Added more luxurious icon -->
-    <h2>Welcome to Our Premium Site!</h2>
-    <p>We're thrilled to have you here. Discover and enjoy our exclusive features.</p>
-    <button class="btn" onclick="closePopup()">Close</button>
-</div>
-<!-- Footer Section -->
-<div class="footer">
-    <p>© <span>Shahariar Mahfuz</span> 2024. All rights reserved.</p>
-</div>
+    <div id="welcomePopup" class="popup">
+        <i class="fas fa-gem icon"></i> 
+        <h2>Welcome to Our Premium Site!</h2>
+        <p>We're thrilled to have you here. Discover and enjoy our exclusive features.</p>
+        <button class="btn" onclick="closePopup()">Close</button>
+    </div>
+
+    <div class="footer">
+        <p>© <span>Shahariar Mahfuz</span> 2024. All rights reserved.</p>
+    </div>
     <script>
         function getBrowserDetails() {
-            const browserCodeName = navigator.appCodeName;
-            const browserName = navigator.appName;
-            const cookiesEnabled = navigator.cookieEnabled ? 'true' : 'false';
-            const browserLanguage = navigator.language || navigator.userLanguage;
-            const browserOnline = navigator.onLine ? 'true' : 'false';
-            const platform = navigator.platform;
-            const userAgent = navigator.userAgent;
-            const date = new Date().toLocaleDateString();
-            
-            // Display details
-            document.getElementById('browserCodeName').textContent = browserCodeName;
-            document.getElementById('browserName').textContent = browserName;
-            document.getElementById('cookiesEnabled').textContent = cookiesEnabled;
-            document.getElementById('browserLanguage').textContent = browserLanguage;
-            document.getElementById('browserOnline').textContent = browserOnline;
-            document.getElementById('platform').textContent = platform;
-            document.getElementById('userAgent').textContent = userAgent;
-            document.getElementById('date').textContent = date;
-        }
+    const browserCodeName = navigator.appCodeName;
+    const browserName = navigator.appName;
+    const cookiesEnabled = navigator.cookieEnabled ? 'true' : 'false';
+    const browserLanguage = navigator.language || navigator.userLanguage;
+    const browserOnline = navigator.onLine ? 'true' : 'false';
+    const platform = navigator.platform;
+    const userAgent = navigator.userAgent;
+    const date = new Date().toLocaleDateString();
 
-        function updateTime() {
-            const now = new Date();
-            document.getElementById('time').textContent = now.toLocaleTimeString();
-        }
+    // Display details
+    document.getElementById('browserCodeName').textContent = browserCodeName;
+    document.getElementById('browserName').textContent = browserName;
+    document.getElementById('cookiesEnabled').textContent = cookiesEnabled;
+    document.getElementById('browserLanguage').textContent = browserLanguage;
+    document.getElementById('browserOnline').textContent = browserOnline;
+    document.getElementById('platform').textContent = platform;
+    document.getElementById('userAgent').textContent = userAgent;
+    document.getElementById('date').textContent = date;
+}
 
-        function fetchIP() {
-            fetch('https://api.ipify.org?format=json')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('ipAddress').textContent = data.ip;
-                })
-                .catch(() => {
-                    document.getElementById('ipAddress').textContent = 'Unable to fetch IP';
-                });
-        }
+function updateTime() {
+    const now = new Date();
+    document.getElementById('time').textContent = now.toLocaleTimeString();
+}
 
-        function openMenu() {
-            const sideMenu = document.getElementById("sideMenu");
-            const menuBtn = document.getElementById("menuBtn");
+function fetchIP() {
+    fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('ipAddress').textContent = data.ip;
+        })
+        .catch(() => {
+            document.getElementById('ipAddress').textContent = 'Unable to fetch IP';
+        });
+}
 
-            // Hide menu button when menu is opening
-            menuBtn.classList.add("hidden");
-            sideMenu.classList.add("open");
+function openMenu() {
+    const sideMenu = document.getElementById("sideMenu");
+    const menuBtn = document.getElementById("menuBtn");
 
-            // Set background overlay
-            document.body.style.backgroundColor = "rgba(0,0,0,0.5)";
-        }
+    menuBtn.classList.add("hidden");
+    sideMenu.classList.add("open");
 
-        function closeMenu() {
-            const sideMenu = document.getElementById("sideMenu");
-            const menuBtn = document.getElementById("menuBtn");
+    document.body.style.backgroundColor = "rgba(0,0,0,0.5)";
+}
 
-            // Close menu with animation
-            sideMenu.classList.remove("open");
+function closeMenu() {
+    const sideMenu = document.getElementById("sideMenu");
+    const menuBtn = document.getElementById("menuBtn");
 
-            // Delay showing menu button until the menu is fully closed
-            setTimeout(() => {
-                menuBtn.classList.remove("hidden");
-            }, 500); // Match this with the close animation duration
+    sideMenu.classList.remove("open");
 
-            // Remove background overlay
-            document.body.style.backgroundColor = "#f5f5f5";
-        }
+    setTimeout(() => {
+        menuBtn.classList.remove("hidden");
+    }, 500); 
 
-        function openPopup() {
+    document.body.style.backgroundColor = "#f5f5f5";
+}
+
+function openPopup() {
     const popup = document.getElementById('welcomePopup');
     popup.classList.add('open');
 }
@@ -471,17 +513,24 @@ function closePopup() {
     popup.classList.add('close');
     setTimeout(() => {
         popup.classList.remove('open', 'close');
-    }, 300); // Match this with the close animation duration
+    }, 300); 
 }
 
-        // Initialize
-        getBrowserDetails();
-        fetchIP();
-        updateTime();
-        setInterval(updateTime, 1000); // Update time every second
+document.querySelectorAll('.has-submenu > a').forEach(menuItem => {
+    menuItem.addEventListener('click', function () {
+        const parent = this.parentElement;
+        parent.classList.toggle('open');
+    });
+});
 
-        // Show popup on page load
-        window.onload = openPopup;
+// Initialize
+getBrowserDetails();
+fetchIP();
+updateTime();
+setInterval(updateTime, 1000); // Update time every second
+
+// Show popup on page load
+window.onload = openPopup;
     </script>
 </body>
-  </html>
+</html>

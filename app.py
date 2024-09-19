@@ -293,16 +293,22 @@ def send_request(channel_name, channel_id):
     base_url_youtube = "https://psychic-succotash-three.vercel.app/youtube?live&id="
     base_url_use = "https://nekotools.onrender.com/use?channel="
 
+    # প্রথম রিকোয়েস্ট পাঠানো
     youtube_link = f"{base_url_youtube}{channel_id}.m3u8"
     response = requests.get(youtube_link)
 
     if response.status_code == 200:
-        redirected_link = response.url
+        redirected_link = response.url  # প্রাপ্ত লিংক
 
+        # ১৫ সেকেন্ড অপেক্ষা করুন
+        time.sleep(15)
+
+        # দ্বিতীয় রিকোয়েস্ট পাঠানো
         use_link = f"{base_url_use}{channel_name}&link={redirected_link}"
         use_response = requests.get(use_link)
 
         if use_response.status_code == 200:
+            # সাকসেসফুল স্ট্যাটাস সংরক্ষণ
             request_status.append({
                 'channel': channel_name,
                 'id': channel_id,
@@ -310,6 +316,7 @@ def send_request(channel_name, channel_id):
             })
             print(f"Successfully sent link for {channel_name}")
         else:
+            # ব্যর্থতার স্ট্যাটাস সংরক্ষণ
             request_status.append({
                 'channel': channel_name,
                 'id': channel_id,
@@ -317,6 +324,7 @@ def send_request(channel_name, channel_id):
             })
             print(f"Failed to send link for {channel_name}, status code: {use_response.status_code}")
     else:
+        # ব্যর্থতার স্ট্যাটাস সংরক্ষণ
         request_status.append({
             'channel': channel_name,
             'id': channel_id,
@@ -324,27 +332,22 @@ def send_request(channel_name, channel_id):
         })
         print(f"Failed to get redirected link for {channel_name}, status code: {response.status_code}")
 
-# প্রতি চ্যানেল আলাদাভাবে রিকোয়েস্ট পাঠানোর জন্য থ্রেড ব্যবহার করুন
+# প্রতি এক মিনিট অন্তর রিকোয়েস্ট পাঠানোর জন্য ফাংশন
 def background_task():
     while True:
-        threads = []
         for channel_info in channels:
+            # চ্যানেলের নাম এবং আইডি আলাদা করা
             channel_name, channel_id = channel_info.split("&")
-            thread = threading.Thread(target=send_request, args=(channel_name, channel_id))
-            threads.append(thread)
-            thread.start()
-            time.sleep(15)  # ১৫ সেকেন্ড অপেক্ষা করুন পরবর্তী থ্রেড শুরু করার আগে
-
-        # সমস্ত থ্রেড শেষ হওয়া পর্যন্ত অপেক্ষা করুন
-        for thread in threads:
-            thread.join()
-            
-        time.sleep(3600)  # এক ঘণ্টা অপেক্ষা করুন
+            send_request(channel_name, channel_id)
+            # ৩০ সেকেন্ড অপেক্ষা করুন (১৫ সেকেন্ড প্রথম ধাপ এবং ১৫ সেকেন্ড দ্বিতীয় ধাপের জন্য)
+            time.sleep(30)
+        # প্রতি ঘণ্টায় একবার সমস্ত চ্যানেল প্রক্রিয়া করা হবে
+        time.sleep(3600)
 
 # প্রতি ৩০ মিনিটে স্ট্যাটাস ক্লিয়ার করার ফাংশন
 def clear_status():
     while True:
-        time.sleep(1800)  # ৩০ মিনিট (১৮০০ সেকেন্ড)
+        time.sleep(3540)  # ৩০ মিনিট (১৮০০ সেকেন্ড)
         request_status.clear()
         print("Cleared request statuses")
 
@@ -431,3 +434,4 @@ if __name__ == "__main__":
     # Flask অ্যাপ চালানো
     threading.Thread(target=keep_alive_task, daemon=True).start()
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)
+        

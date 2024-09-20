@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Raleway', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; 
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            max-width: 500px; 
+            width: 90%; 
+        }
+
+        .container h3 {
+            font-size: 28px;
+            font-weight: 600;
+            color: 0000; /* Change this to your preferred premium color */
+            text-align: center;
+            margin-bottom: 20px;
+            white-space: nowrap; /* Ensure the text stays on one line */
+            overflow: hidden;    /* Hide overflow if any */
+        }
+
+        label {
+            font-size: 16px;
+            color: #495057; 
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-control {
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            font-size: 18px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #d4edda; 
+            border: 1px solid #c3e6cb; 
+            border-radius: 5px;
+            font-size: 16px;
+            color: #155724;
+            font-family: 'Courier New', monospace; 
+        }
+
+        .icon {
+            color: #007bff;
+            font-size: 24px;
+            margin-right: 8px;
+        }
+
+        .custom-dropdown {
+            position: relative;
+            width: 100%;
+        }
+
+        .custom-dropdown select {
+            display: none; 
+        }
+
+        .select-box {
+    position: relative;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 10px 40px 10px 10px; /* Increased left padding */
+    font-size: 16px;
+    color: #495057;
+    white-space: nowrap; 
+    overflow: hidden;    
+    text-overflow: ellipsis; 
+        }
+
+        .select-box:after {
+            content: "\f078"; 
+            font-family: "FontAwesome";
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #495057;
+            pointer-events: none;
+        }
+
+        .options-container {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            max-height: 200px; 
+            overflow-y: auto; 
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            z-index: 10;
+            display: none;
+        }
+
+        .option {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .option:hover, .option.selected {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .option:last-child {
+            border-bottom: none;
+        }
+
+        .options-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .options-container::-webkit-scrollbar-thumb {
+            background-color: #007bff;
+            border-radius: 5px;
+        }
+
+        .swap-button {
+            display: flex;
+            justify-content: center; 
+            margin-top: 15px; 
+            margin-bottom: 15px; 
+        }
+
+        #swap-button {
+            background-color: #007bff; 
+            color: white;
+            border: none;
+            border-radius: 50%; /* Make it circular */
+            padding: 10px; /* Add padding for size */
+            cursor: pointer;
+            transition: transform 0.3s; /* Smooth rotation */
+            width: 50px; /* Set width for circle */
+            height: 50px; /* Set height for circle */
+            display: flex; /* Center icon */
+            justify-content: center; /* Center icon */
+            align-items: center; /* Center icon */
+        }
+
+        #swap-button.rotating {
+            animation: rotate 0.3s ease;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3><i class="fab fa-bitcoin"></i>  Currency Converter</h3>
+
+        <form method="GET">
+            <div class="form-group">
+                <label for="from_currency">From:</label>
+                <div class="custom-dropdown" id="from_currency_dropdown">
+                    <div class="select-box" id="from_currency_select">
+                        {% if from_currency %}
+                            {% for currency in currencies %}
+                                {% if currency[1] == from_currency %}
+                                    {{ currency[0] }} {{ currency[1] }} - {{ currency[2] }}
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            Select Currency
+                        {% endif %}
+                    </div>
+                    <div class="options-container" id="from_currency_options">
+                        {% for currency in currencies %}
+                        <div class="option" data-value="{{ currency[1] }}">
+                            {{ currency[0] }} {{ currency[1] }} - {{ currency[2] }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <input type="hidden" name="from_currency" id="from_currency_input" value="{{ from_currency }}">
+            </div>
+
+            <div class="swap-button">
+                <button type="button" id="swap-button"><i class="fas fa-sync-alt"></i></button> 
+            </div>
+
+            <div class="form-group">
+                <label for="to_currency">To:</label>
+                <div class="custom-dropdown" id="to_currency_dropdown">
+                    <div class="select-box" id="to_currency_select">
+                        {% if to_currency %}
+                            {% for currency in currencies %}
+                                {% if currency[1] == to_currency %}
+                                    {{ currency[0] }} {{ currency[1] }} - {{ currency[2] }}
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            Select Currency
+                        {% endif %}
+                    </div>
+                    <div class="options-container" id="to_currency_options">
+                        {% for currency in currencies %}
+                        <div class="option" data-value="{{ currency[1] }}">
+                            {{ currency[0] }} {{ currency[1] }} - {{ currency[2] }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <input type="hidden" name="to_currency" id="to_currency_input" value="{{ to_currency }}">
+            </div>
+
+            <div class="form-group">
+                <label for="amount">Amount:</label>
+                <input type="number" class="form-control" name="amount" placeholder="Enter amount" required 
+                       value="{{ amount if amount else '' }}"> 
+            </div>
+
+            <button type="submit" class="btn btn-primary"><i class="fas fa-exchange-alt"></i> Convert</button>
+        </form>
+
+        {% if result %}
+            <div class="result">{{ result }}</div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function setupDropdown(dropdownId, selectBoxId, optionsContainerId, inputId) {
+                const selectBox = document.getElementById(selectBoxId);
+                const optionsContainer = document.getElementById(optionsContainerId);
+                const options = optionsContainer.querySelectorAll('.option');
+                const input = document.getElementById(inputId);
+
+                selectBox.addEventListener('click', function () {
+                    optionsContainer.style.display = optionsContainer.style.display === 'block' ? 'none' : 'block';
+                });
+
+                options.forEach(option => {
+                    option.addEventListener('click', function () {
+                        selectBox.innerText = option.innerText;
+                        input.value = option.getAttribute('data-value');
+                        optionsContainer.style.display = 'none';
+                    });
+                });
+
+                document.addEventListener('click', function (e) {
+                    if (!dropdownId.contains(e.target)) {
+                        optionsContainer.style.display = 'none';
+                    }
+                    });
+            }
+
+            // Set up both dropdowns
+            setupDropdown(document.getElementById('from_currency_dropdown'), 'from_currency_select', 'from_currency_options', 'from_currency_input');
+            setupDropdown(document.getElementById('to_currency_dropdown'), 'to_currency_select', 'to_currency_options', 'to_currency_input');
+        });
+
+        // Swap functionality with rotation effect
+        document.getElementById('swap-button').addEventListener('click', function () {
+            const fromSelect = document.getElementById('from_currency_select');
+            const toSelect = document.getElementById('to_currency_select');
+            const fromInput = document.getElementById('from_currency_input');
+            const toInput = document.getElementById('to_currency_input');
+
+            // Swap text in select boxes
+            const tempSelectText = fromSelect.innerText;
+            fromSelect.innerText = toSelect.innerText;
+            toSelect.innerText = tempSelectText;
+
+            // Swap hidden input values
+            const tempInputValue = fromInput.value;
+            fromInput.value = toInput.value;
+            toInput.value = tempInputValue;
+
+            // Add rotation class for animation
+            this.classList.add('rotating');
+
+            // Remove rotation class after animation ends
+            setTimeout(() => {
+                this.classList.remove('rotating');
+            }, 300); // Adjust duration to match the CSS
+        });
+    </script>
+</body>
+</html>

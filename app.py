@@ -438,6 +438,170 @@ def change_id():
     session['user_id'] = generate_random_id()
     return redirect(url_for('translate'))
 
+API_KEY = 'ab2c4df280e465bab4875b51'
+
+currencies = [
+    ("🇧🇩", "BDT", "Bangladeshi Taka"),
+    ("🇦🇪", "AED", "United Arab Emirates Dirham"),
+    ("🇦🇫", "AFN", "Afghan Afghani"),
+    ("🇦🇱", "ALL", "Albanian Lek"),
+    ("🇦🇲", "AMD", "Armenian Dram"),
+    ("🇧🇶", "ANG", "Netherlands Antillean Guilder"),
+    ("🇦🇴", "AOA", "Angolan Kwanza"),
+    ("🇦🇷", "ARS", "Argentine Peso"),
+    ("🇦🇺", "AUD", "Australian Dollar"),
+    ("🇦🇼", "AWG", "Aruban Florin"),
+    ("🇦🇿", "AZN", "Azerbaijani Manat"),
+    ("🇧🇦", "BAM", "Bosnia-Herzegovina Convertible Mark"),
+    ("🇧🇧", "BBD", "Barbadian Dollar"),
+    ("🇧🇬", "BGN", "Bulgarian Lev"),
+    ("🇧🇭", "BHD", "Bahraini Dinar"),
+    ("🇧🇮", "BIF", "Burundian Franc"),
+    ("🇧🇲", "BMD", "Bermudian Dollar"),
+    ("🇧🇬", "BND", "Brunei Dollar"),
+    ("🇧🇴", "BOB", "Bolivian Boliviano"),
+    ("🇧🇷", "BRL", "Brazilian Real"),
+    ("🇧🇸", "BSD", "Bahamian Dollar"),
+    ("🇧🇹", "BTN", "Bhutanese Ngultrum"),
+    ("🇧🇼", "BWP", "Botswana Pula"),
+    ("🇧🇾", "BYN", "Belarusian Ruble"),
+    ("🇧🇿", "BZD", "Belize Dollar"),
+    ("🇨🇦", "CAD", "Canadian Dollar"),
+    ("🇨🇩", "CDF", "Congolese Franc"),
+    ("🇨🇭", "CHF", "Swiss Franc"),
+    ("🇨🇱", "CLP", "Chilean Peso"),
+    ("🇨🇳", "CNY", "Chinese Yuan"),
+    ("🇨🇴", "COP", "Colombian Peso"),
+    ("🇨🇷", "CRC", "Costa Rican Colón"),
+    ("🇨🇺", "CUP", "Cuban Peso"),
+    ("🇨🇻", "CVE", "Cape Verdean Escudo"),
+    ("🇨🇿", "CZK", "Czech Koruna"),
+    ("🇩🇯", "DJF", "Djiboutian Franc"),
+    ("🇩🇰", "DKK", "Danish Krone"),
+    ("🇩🇴", "DOP", "Dominican Peso"),
+    ("🇩🇿", "DZD", "Algerian Dinar"),
+    ("🇪🇬", "EGP", "Egyptian Pound"),
+    ("🇪🇷", "ERN", "Eritrean Nakfa"),
+    ("🇪🇹", "ETB", "Ethiopian Birr"),
+    ("🇪🇺", "EUR", "Euro"),
+    ("🇫🇯", "FJD", "Fijian Dollar"),
+    ("🇫🇰", "FKP", "Falkland Islands Pound"),
+    ("🇫🇴", "FOK", "Faroese Króna"),
+    ("🇬🇧", "GBP", "British Pound Sterling"),
+    ("🇬🇪", "GEL", "Georgian Lari"),
+    ("🇬🇬", "GGP", "Guernsey Pound"),
+    ("🇬🇭", "GHS", "Ghanaian Cedi"),
+    ("🇬🇮", "GIP", "Gibraltar Pound"),
+    ("🇬🇲", "GMD", "Gambian Dalasi"),
+    ("🇬🇳", "GNF", "Guinean Franc"),
+    ("🇬🇹", "GTQ", "Guatemalan Quetzal"),
+    ("🇬🇾", "GYD", "Guyanese Dollar"),
+    ("🇭🇰", "HKD", "Hong Kong Dollar"),
+    ("🇭🇳", "HNL", "Honduran Lempira"),
+    ("🇭🇷", "HRK", "Croatian Kuna"),
+    ("🇭🇹", "HTG", "Haitian Gourde"),
+    ("🇭🇺", "HUF", "Hungarian Forint"),
+    ("🇮🇩", "IDR", "Indonesian Rupiah"),
+    ("🇮🇱", "ILS", "Israeli New Shekel"),
+    ("🇮🇲", "IMP", "Isle of Man Pound"),
+    ("🇮🇳", "INR", "Indian Rupee"),
+    ("🇮🇶", "IQD", "Iraqi Dinar"),
+    ("🇮🇮", "IRR", "Iranian Rial"),
+    ("🇮🇸", "ISK", "Icelandic Króna"),
+    ("🇯🇪", "JEP", "Jersey Pound"),
+    ("🇯🇲", "JMD", "Jamaican Dollar"),
+    ("🇯🇴", "JOD", "Jordanian Dinar"),
+    ("🇯🇵", "JPY", "Japanese Yen"),
+    ("🇰🇪", "KES", "Kenyan Shilling"),
+    ("🇰🇬", "KGS", "Kyrgyzstani Som"),
+    ("🇰🇭", "KHR", "Cambodian Riel"),
+    ("🇰🇶", "KID", "Kiribati Dollar"),
+    ("🇰🇫", "KMF", "Comorian Franc"),
+    ("🇰🇷", "KRW", "South Korean Won"),
+    ("🇰🇼", "KWD", "Kuwaiti Dinar"),
+    ("🇰🇾", "KYD", "Cayman Islands Dollar"),
+    ("🇰🇿", "KZT", "Kazakhstani Tenge"),
+    ("🇱🇦", "LAK", "Lao Kip"),
+    ("🇱🇧", "LBP", "Lebanese Pound"),
+    ("🇱🇰", "LKR", "Sri Lankan Rupee"),
+    ("🇱🇷", "LRD", "Liberian Dollar"),
+    ("🇱🇸", "LSL", "Lesotho Loti"),
+    ("🇱🇾", "LYD", "Libyan Dinar"),
+    ("🇲🇦", "MAD", "Moroccan Dirham"),
+    ("🇲🇩", "MDL", "Moldovan Leu"),
+    ("🇲🇬", "MGA", "Malagasy Ariary"),
+    ("🇲🇰", "MKD", "Macedonian Denar"),
+    ("🇲🇲", "MMK", "Myanmar Kyat"),
+    ("🇲🇳", "MNT", "Mongolian Tögrög"),
+    ("🇲🇴", "MOP", "Macanese Pataca"),
+    ("🇲🇷", "MRU", "Mauritanian Ouguiya"),
+    ("🇲🇺", "MUR", "Mauritian Rupee"),
+    ("🇲🇻", "MVR", "Maldivian Rufiyaa"),
+    ("🇲🇼", "MWK", "Malawian Kwacha"),
+    ("🇲🇽", "MXN", "Mexican Peso"),
+    ("🇲🇾", "MYR", "Malaysian Ringgit"),
+    ("🇲🇿", "MZN", "Mozambican Metical"),
+    ("🇳🇦", "NAD", "Namibian Dollar"),
+    ("🇳🇬", "NGN", "Nigerian Naira"),
+    ("🇳🇮", "NIO", "Nicaraguan Córdoba"),
+    ("🇳🇴", "NOK", "Norwegian Krone"),
+    ("🇳🇵", "NPR", "Nepalese Rupee"),
+    ("🇳🇿", "NZD", "New Zealand Dollar"),
+    ("🇴🇲", "OMR", "Omani Rial"),
+    ("🇵🇦", "PAB", "Panamanian Balboa"),
+    ("🇵🇪", "PEN", "Peruvian Sol"),
+    ("🇵🇬", "PGK", "Papua New Guinean Kina"),
+    ("🇵🇭", "PHP", "Philippine Peso"),
+    ("🇵🇰", "PKR", "Pakistani Rupee"),
+    ("🇵🇱", "PLN", "Polish Zloty"),
+    ("🇵🇾", "PYG", "Paraguayan Guarani"),
+    ("🇶🇦", "QAR", "Qatari Rial"),
+    ("🇷🇴", "RON", "Romanian Leu"),
+    ("🇷🇸", "RSD", "Serbian Dinar"),
+    ("🇷🇺", "RUB", "Russian Ruble"),
+    ("🇷🇼", "RWF", "Rwandan Franc"),
+    ("🇸🇦", "SAR", "Saudi Riyal"),
+    ("🇸🇧", "SBD", "Solomon Islands Dollar"),
+    ("🇸🇨", "SCR", "Seychellois Rupee"),
+    ("🇸🇩", "SDG", "Sudanese Pound"),
+    ("🇸🇪", "SEK", "Swedish Krona"),
+    ("🇸🇬", "SGD", "Singapore Dollar"),
+    ("🇸🇭", "SHP", "Saint Helena Pound"),
+    ("🇸🇱", "SLE", "Sierra Leonean Leone"),
+    ("🇸🇬", "SLL", "Sierra Leonean Leone"),
+    ("🇸🇧", "SOS", "Somali Shilling"),
+    ("🇸🇷", "SRD", "Surinamese Dollar"),
+    ("🇸🇸", "SSP", "South Sudanese Pound"),
+    ("🇸🇹", "STN", "São Tomé and Príncipe Dobra"),
+    ("🇸🇾", "SYP", "Syrian Pound"),
+    ("🇿🇦", "ZAR", "South African Rand"),
+    ("🇿🇼", "ZWL", "Zimbabwean Dollar"),
+]
+
+
+@app.route('/currency', methods=['GET'])
+def currency_converter():
+    from_currency = request.args.get('from_currency', '')
+    to_currency = request.args.get('to_currency', '')
+    amount = request.args.get('amount', '')
+
+    result = ''
+    if from_currency and to_currency and amount:
+        # API থেকে রূপান্তরের রেট নেওয়া
+        url = f'https://v6.exchangerate-api.com/v6/{API_KEY}/latest/{from_currency}'
+        response = requests.get(url)
+        data = response.json()
+
+        if data['result'] == 'success':
+            conversion_rate = data['conversion_rates'][to_currency]
+            converted_amount = float(amount) * conversion_rate
+            result = f"{amount} {from_currency} = {converted_amount:.2f} {to_currency}"
+        else:
+            result = "Conversion rate not available."
+
+    return render_template('currency.html', currencies=currencies, result=result, 
+                           from_currency=from_currency, to_currency=to_currency, amount=amount)
+                           
 if __name__ == "__main__":
     # ব্যাকগ্রাউন্ডে রিকোয়েস্ট পাঠানোর টাস্ক
     threading.Thread(target=background_task).start()
@@ -448,4 +612,3 @@ if __name__ == "__main__":
     # Flask অ্যাপ চালানো
     threading.Thread(target=keep_alive_task, daemon=True).start()
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)
-        

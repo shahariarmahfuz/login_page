@@ -289,7 +289,7 @@ channels = [
 request_status = []
 
 # নির্দিষ্ট রিকোয়েস্ট পাঠানোর ফাংশন
-def send_request(channel_name, channel_id):
+def send_request(channel_name, channel_id, failed_channels):
     base_url_youtube = "https://psychic-succotash-three.vercel.app/youtube?live&id="
     base_url_use = "https://nekotools.onrender.com/use?channel="
 
@@ -316,31 +316,45 @@ def send_request(channel_name, channel_id):
             })
             print(f"Successfully sent link for {channel_name}")
         else:
-            # ব্যর্থতার স্ট্যাটাস সংরক্ষণ
+            # ব্যর্থতার স্ট্যাটাস সংরক্ষণ এবং failed_channels এ যুক্ত করা
             request_status.append({
                 'channel': channel_name,
                 'id': channel_id,
                 'status': 'Failed'
             })
+            failed_channels.append(channel_name)  # Add to failed channels
             print(f"Failed to send link for {channel_name}, status code: {use_response.status_code}")
     else:
-        # ব্যর্থতার স্ট্যাটাস সংরক্ষণ
+        # ব্যর্থতার স্ট্যাটাস সংরক্ষণ এবং failed_channels এ যুক্ত করা
         request_status.append({
             'channel': channel_name,
             'id': channel_id,
             'status': 'Failed'
         })
+        failed_channels.append(channel_name)  # Add to failed channels
         print(f"Failed to get redirected link for {channel_name}, status code: {response.status_code}")
 
 # প্রতি এক মিনিট অন্তর রিকোয়েস্ট পাঠানোর জন্য ফাংশন
 def background_task():
     while True:
+        failed_channels = []  # Failed channels list
+
+        # প্রথমবারের জন্য সমস্ত চ্যানেল প্রক্রিয়া করা
         for channel_info in channels:
-            # চ্যানেলের নাম এবং আইডি আলাদা করা
             channel_name, channel_id = channel_info.split("&")
-            send_request(channel_name, channel_id)
-            # ৩০ সেকেন্ড অপেক্ষা করুন (১৫ সেকেন্ড প্রথম ধাপ এবং ১৫ সেকেন্ড দ্বিতীয় ধাপের জন্য)
+            send_request(channel_name, channel_id, failed_channels)
+            # ৩০ সেকেন্ড অপেক্ষা করুন
             time.sleep(30)
+
+        # যদি কোন চ্যানেল ফেল হয় তবে পুনরায় চেষ্টা করুন
+        if failed_channels:
+            print("Retrying failed channels...")
+            for channel_name in failed_channels:
+                channel_id = next(id for name, id in (info.split("&") for info in channels) if name == channel_name)
+                send_request(channel_name, channel_id, [])
+                # ৩০ সেকেন্ড অপেক্ষা করুন
+                time.sleep(30)
+
         # প্রতি ঘণ্টায় একবার সমস্ত চ্যানেল প্রক্রিয়া করা হবে
         time.sleep(3600)
 

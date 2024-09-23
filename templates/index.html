@@ -160,8 +160,8 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 50px;  
-            height: 50px; 
+            width: 50px; /* Increased size */
+            height: 50px; /* Increased size */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -179,11 +179,11 @@
 
         .orbit {
             position: absolute;
-            width: 60px; 
-            height: 60px; 
+            width: 60px; /* Adjusted orbit size */
+            height: 60px; /* Adjusted orbit size */
             border-radius: 50%;
             z-index: 1;
-            margin: -5px; 
+            margin: -5px; /* Adjust for distance from button */
             clip-path: circle(50% at 50% 50%);
             overflow: hidden;
         }
@@ -196,6 +196,14 @@
             clip-path: circle(50% at 50% 50%);
             background: conic-gradient(rgba(0, 123, 255, 0.5) 0%, transparent 0%);
             z-index: 1;
+        }
+
+        .scroll-to-top:focus {
+            outline: none;
+        }
+
+        .scroll-to-top i {
+            font-size: 24px; /* Adjust icon size */
         }
 
         /* Mobile responsiveness */
@@ -276,24 +284,25 @@
                             const groupDiv = document.createElement('div');
                             groupDiv.className = 'group';
                             const groupTitle = document.createElement('h2');
-                            groupTitle.textContent = group.group;
+                            groupTitle.textContent =group.group;
                             groupDiv.appendChild(groupTitle);
                             const channelsDiv = document.createElement('div');
-                            channelsDiv.className = 'channel-list';
+                            channelsDiv.className = 'channels';
                             group.channels.forEach(channel => {
                                 const channelBtn = document.createElement('a');
+                                channelBtn.href = `/channel/${linkName}/${channel.name}`;
                                 channelBtn.className = 'channel-btn';
-                                channelBtn.href = channel.url; // Channel URL
-                                channelBtn.target = '_blank'; // Open in new tab
                                 const logoContainer = document.createElement('div');
                                 logoContainer.className = 'channel-logo-container';
-                                const logoImg = document.createElement('img');
-                                logoImg.src = channel.logo; // Channel logo URL
-                                logoImg.alt = channel.name;
-                                logoImg.className = 'channel-logo';
-                                logoContainer.appendChild(logoImg);
+                                const logo = document.createElement('img');
+                                logo.src = channel.logo;
+                                logo.alt = `${channel.name} logo`;
+                                logo.className = 'channel-logo';
+                                const name = document.createElement('span');
+                                name.textContent = channel.name;
+                                logoContainer.appendChild(logo);
                                 channelBtn.appendChild(logoContainer);
-                                channelBtn.appendChild(document.createTextNode(channel.name));
+                                channelBtn.appendChild(name);
                                 channelsDiv.appendChild(channelBtn);
                             });
                             groupDiv.appendChild(channelsDiv);
@@ -302,42 +311,63 @@
                     });
             }
 
-            // Dropdown interaction
-            dropdown.addEventListener('click', function() {
+            selected.addEventListener('click', function() {
                 list.style.display = list.style.display === 'block' ? 'none' : 'block';
             });
 
-            list.querySelectorAll('.dropdown-item').forEach(item => {
+            dropdown.querySelectorAll('.dropdown-item').forEach(item => {
                 item.addEventListener('click', function() {
-                    const linkName = this.getAttribute('data-value');
-                    selected.textContent = linkName;
-                    loadChannels(linkName);
+                    const value = this.getAttribute('data-value');
+                    selected.textContent = this.textContent;
+                    loadChannels(value);
                     list.style.display = 'none';
                 });
             });
 
-            // Load first playlist on page load
-            const firstItem = list.querySelector('.dropdown-item');
-            if (firstItem) {
-                firstItem.click(); // Simulate a click to load channels
-            }
-
-            // Scroll to Top functionality
-            const scrollToTopBtn = document.getElementById('scrollToTopBtn');
-            const scrollButton = document.getElementById('scrollButton');
-
-            window.addEventListener('scroll', function() {
-                if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                    scrollToTopBtn.classList.add('show');
-                } else {
-                    scrollToTopBtn.classList.remove('show');
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!dropdown.contains(e.target)) {
+                    list.style.display = 'none';
                 }
             });
 
-            scrollButton.addEventListener('click', function() {
-                document.body.scrollTop = 0; // For Safari
-                document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-            });
+            // Scroll to top button functionality
+            const scrollToTopButton = document.getElementById('scrollToTopBtn');
+            const progress = document.getElementById('progress');
+            const scrollButton = document.getElementById('scrollButton');
+
+            window.onscroll = function() {
+                const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const scrollPosition = window.scrollY;
+                const completionPercentage = (scrollPosition / scrollHeight) * 100;
+
+                if (scrollPosition > 100) {
+                    scrollToTopButton.classList.add('show');
+                    progress.style.background = `conic-gradient(rgba(0, 123, 255, 0.5) ${completionPercentage}%, transparent ${completionPercentage}%)`;
+                } else {
+                    scrollToTopButton.classList.remove('show');
+                    progress.style.background = `conic-gradient(rgba(0, 123, 255, 0.5) 0%, transparent 0%)`;
+                }
+            };
+
+            scrollButton.onclick = function() {
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+
+                // Add temporary scale effect
+                this.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150); // Adjust duration as needed
+            };
+
+            // Load the first link's channels on page load
+            const firstLink = dropdown.querySelector('.dropdown-item');
+            if (firstLink) {
+                const firstValue = firstLink.getAttribute('data-value');
+                selected.textContent = firstLink.textContent;
+                loadChannels(firstValue);
+            }
         });
     </script>
 </body>

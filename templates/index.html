@@ -16,6 +16,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
             min-height: 100vh;
         }
 
@@ -52,6 +53,11 @@
             background-color: #f9f9f9;
             max-width: 300px;
             margin-bottom: 20px;
+        }
+
+        .dropdown-selected {
+            display: flex;
+            align-items: center;
         }
 
         .dropdown-list {
@@ -133,6 +139,29 @@
             object-fit: cover;
         }
 
+        /* Scroll to Top Button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s, transform 0.3s;
+            display: none; /* Initially hidden */
+        }
+
+        .scroll-to-top:hover {
+            background-color: #0056b3;
+            transform: scale(1.1);
+        }
+
         /* Mobile responsiveness */
         @media (max-width: 768px) {
             .channel-list {
@@ -169,7 +198,9 @@
             <div>
                 <label for="m3u-selector">Choose a playlist:</label>
                 <div class="custom-dropdown" id="m3u-selector">
-                    <div class="dropdown-selected">Select a playlist</div>
+                    <div class="dropdown-selected">
+                        <i class="fas fa-list"></i> Select a playlist
+                    </div>
                     <div class="dropdown-list">
                         {% for link_name, link_url in m3u_urls.items() %}
                             <div class="dropdown-item" data-value="{{ link_name }}">{{ link_name }}</div>
@@ -183,6 +214,8 @@
             </div>
         </section>
     </div>
+
+    <button class="scroll-to-top" id="scrollToTop"><i class="fas fa-chevron-up"></i></button>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -247,9 +280,25 @@
                 }
             });
 
+            // Scroll to top button functionality
+            const scrollToTopButton = document.getElementById('scrollToTop');
+            window.addEventListener('scroll', function() {
+                if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                    scrollToTopButton.style.display = 'block';
+                } else {
+                    scrollToTopButton.style.display = 'none';
+                }
+            });
+
+            scrollToTopButton.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
             // Load the default link's channels on page load
             loadChannels('default_link_name'); // Change 'default_link_name' to your actual default
-
         });
     </script>
 </body>

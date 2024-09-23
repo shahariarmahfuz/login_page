@@ -43,33 +43,36 @@
             margin: 0;
         }
 
-        .link-btn {
-            display: inline-block;
-            background-color: #007bff;
-            color: #fff;
-            padding: 15px 30px;
-            text-decoration: none;
-            border-radius: 8px;
-            margin: 10px;
-            transition: background-color 0.3s, box-shadow 0.3s;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .link-btn:hover {
-            background-color: #0056b3;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        select {
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 8px;
+        .custom-dropdown {
+            position: relative;
+            cursor: pointer;
             border: 1px solid #ddd;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 300px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 12px;
             background-color: #f9f9f9;
+            max-width: 300px;
+            margin-bottom: 20px;
+        }
+
+        .dropdown-list {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            border: 1px solid #ddd;
+            background-color: white;
+            border-radius: 8px;
+            z-index: 10;
+        }
+
+        .dropdown-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f0f0f0;
         }
 
         .channel-list {
@@ -165,11 +168,14 @@
         <section>
             <div>
                 <label for="m3u-selector">Choose a playlist:</label>
-                <select id="m3u-selector">
-                    {% for link_name, link_url in m3u_urls.items() %}
-                        <option value="{{ link_name }}" {% if link_name == selected_link %}selected{% endif %}>{{ link_name }}</option>
-                    {% endfor %}
-                </select>
+                <div class="custom-dropdown" id="m3u-selector">
+                    <div class="dropdown-selected">Select a playlist</div>
+                    <div class="dropdown-list">
+                        {% for link_name, link_url in m3u_urls.items() %}
+                            <div class="dropdown-item" data-value="{{ link_name }}">{{ link_name }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
 
             <div id="channelList" class="channel-list">
@@ -180,13 +186,15 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const selector = document.getElementById('m3u-selector');
-            const channelList = document.getElementById('channelList');
+            const dropdown = document.getElementById('m3u-selector');
+            const selected = dropdown.querySelector('.dropdown-selected');
+            const list = dropdown.querySelector('.dropdown-list');
 
             function loadChannels(linkName) {
                 fetch(`/channels/${linkName}`)
                     .then(response => response.json())
                     .then(data => {
+                        const channelList = document.getElementById('channelList');
                         channelList.innerHTML = '';
                         data.grouped_channels.forEach(group => {
                             const groupDiv = document.createElement('div');
@@ -219,13 +227,29 @@
                     });
             }
 
-            // Load the default link's channels on page load
-            loadChannels(selector.value);
-
-            // Update the channels when a different playlist is selected
-            selector.addEventListener('change', function() {
-                loadChannels(this.value);
+            selected.addEventListener('click', function() {
+                list.style.display = list.style.display === 'block' ? 'none' : 'block';
             });
+
+            dropdown.querySelectorAll('.dropdown-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const value = this.getAttribute('data-value');
+                    selected.textContent = this.textContent;
+                    loadChannels(value);
+                    list.style.display = 'none';
+                });
+            });
+
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!dropdown.contains(e.target)) {
+                    list.style.display = 'none';
+                }
+            });
+
+            // Load the default link's channels on page load
+            loadChannels('default_link_name'); // Change 'default_link_name' to your actual default
+
         });
     </script>
 </body>

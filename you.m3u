@@ -19,7 +19,7 @@ link?
 #EXTINF:-1 tvg-logo="https://i.postimg.cc/kXfCCr0Z/Channel24logo-svg.png" group-title="NEWS",CHANNEL 24
 link?
 
-#EXTINF:-1 tvg-logo="https://i.postimg.cc/pLrHXGxd/channels4-profile.jpg" group-title="NEWS",INDEPENDENCE NEWS
+#EXTINF:-1 tvg-logo="https://i.postimg.cc/pLrHXGxd/channels4-profile.jpg" group-title="NEWS",INDEPENDENT NEWS
 link?
 
 #EXTINF:-1 tvg-logo="https://i.postimg.cc/SKzbcnnF/images-3.jpg" group-title="NEWS",EKHON TV
@@ -29,4 +29,7 @@ link?
 link?
 
 #EXTINF:-1 tvg-logo="https://i.postimg.cc/Gp3yXTWN/wallpaper-1525683191.png" group-title="NEWS",NEWS 24
+link?
+
+#EXTINF:-1 tvg-logo="https://i.postimg.cc/CM2sd73K/1200px-Channel-i-svg.png" group-title="NEWS",CHANNEL I
 link?

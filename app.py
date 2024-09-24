@@ -280,9 +280,9 @@ def get_code():
 # আইডি এবং চ্যানেলের নামের তালিকা
 channels = [
 "SOMOY TV&UCxHoBXkY88Tb8z1Ssj6CWsQ",
-    "RTV NEWS&UC2P5Fd5g41Gtdqf0Uzh8Qaw",
-    "JAMUNA&UCN6sm8iHiPd0cnoUardDAnw",
-    "ATN&UC9Rgo0CrNyd7OWliLekqqGA",
+"RTV NEWS&UC2P5Fd5g41Gtdqf0Uzh8Qaw",
+"JAMUNA&UCN6sm8iHiPd0cnoUardDAnw",
+"ATN&UC9Rgo0CrNyd7OWliLekqqGA",
 "MADANI&UC0AMtPKwU61uDs--L04_kfQ",
 "INDEPENDENT NEWS&UCATUkaOHwO9EP_W87zCiPbA",
 "CHANNEL 24&UCHLqIOMPk20w-6cFgkA90jw",

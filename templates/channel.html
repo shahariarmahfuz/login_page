@@ -7,15 +7,16 @@
     <link rel="stylesheet" type="text/css" href="clap.css">
     <link rel="shortcut icon" type="image/jpeg" href="https://i.postimg.cc/KvBMZpDZ/20240921-203016.jpg" sizes="72x72">
     <link href="https://vjs.zencdn.net/8.3.0/video-js.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Add Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400&family=Raleway:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5; /* Slightly darker background */
+            font-family: 'Oswald', sans-serif; /* Default font is Oswald */
+            background-color: #f0f2f5;
             color: #333;
             margin: 0;
             padding: 0;
+            font-weight: 300;
         }
 
         .container {
@@ -23,31 +24,36 @@
             margin: 20px auto;
             padding: 20px;
             background-color: #fff;
-            border-radius: 12px; /* Increased border-radius */
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15); /* Softer, larger shadow */
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
         }
 
         header {
             text-align: center;
             margin-bottom: 30px;
+            position: relative;
         }
 
         h1 {
-            font-size: 2.5rem; /* Larger heading */
-            color: #2962ff; /* Accent color */
+            font-size: 2.5rem;
+            color: #2962ff;
             margin-bottom: 10px;
+            font-weight: 600; /* Thicker heading for emphasis */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            border-bottom: 2px solid #ff9800; /* Underline effect */
         }
 
         .video-container {
             position: relative;
-            padding-bottom: 56.25%; 
+            padding-bottom: 56.25%;
             height: 0;
             overflow: hidden;
             margin: 0 auto 30px;
             max-width: 100%;
             width: 100%;
-            border-radius: 8px; /* Rounded corners for video */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         .video-container video {
@@ -62,13 +68,14 @@
             margin-top: 30px;
             font-size: 1.8rem;
             color: #2962ff;
-            border-bottom: 3px solid #2962ff; /* Thicker border */
+            border-bottom: 3px solid #2962ff;
             padding-bottom: 12px;
+            font-weight: 400;
         }
 
         .related-channels {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Wider columns */
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 30px;
             margin-top: 30px;
         }
@@ -77,25 +84,26 @@
             display: flex;
             align-items: center;
             padding: 15px 20px;
-            border: none; /* Remove border */
+            border: none;
             border-radius: 10px;
             text-decoration: none;
             color: #333;
-            background: #fff; /* White background */
+            background: #fff;
             transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             overflow: hidden;
             white-space: nowrap;
+            font-weight: 300;
         }
 
         .channel-btn:hover {
-            background: #f0f2f5; /* Subtle hover effect */
+            background: #f0f2f5;
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
             transform: translateY(-2px);
         }
 
         .channel-logo {
-            max-width: 120px; /* Larger logo */
+            max-width: 120px;
             max-height: 120px;
             object-fit: cover;
             border-radius: 10px;
@@ -104,45 +112,46 @@
         }
 
         .attention-bar {
-            background: #fff3cd; /* Lighter yellow */
-            border-left: 5px solid #ff9800; /* Orange border */
+            background: #fff3cd;
+            border-left: 5px solid #ff9800;
             border-radius: 8px;
-            padding: 10px; /* Reduced padding */
+            padding: 10px;
             margin-top: 40px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            color: #333; /* Dark text for contrast */
+            color: #333;
             display: flex;
             align-items: center;
-            gap: 8px; /* Reduced gap */
-            font-family: 'Raleway', sans-serif; 
+            gap: 8px;
+            font-family: 'Raleway', sans-serif;
         }
 
         .attention-bar i {
-            font-size: 20px; /* Smaller icon size */
+            font-size: 20px;
             color: #ff9800;
         }
 
         .attention-bar p {
             margin: 0;
-            font-size: 14px; /* Smaller text size */
+            font-size: 14px;
         }
 
         .marquee-container {
-            background-color: #fff3cd; 
-            border: 1px solid #ff9800; 
+            background-color: #fff3cd;
+            border: 1px solid #ff9800;
             border-radius: 8px;
-            padding: 8px; 
+            padding: 8px;
             margin-top: 30px;
             position: relative;
-            overflow: hidden; 
-            font-family: 'Raleway', sans-serif; 
-            font-size: 15px; 
+            overflow: hidden;
+            font-family: 'Oswald', sans-serif;
+            font-size: 15px;
+            font-weight: 300;
         }
 
         marquee {
-            color: #333; 
+            color: #333;
             font-size: 15px;
-            font-family: 'Raleway', sans-serif; 
+            font-family: 'Oswald', sans-serif;
         }
 
         @media (max-width: 768px) {
@@ -181,7 +190,7 @@
                 var player = videojs('player', {
                     autoplay: true,
                     controls: true,
-                    fluid: true, 
+                    fluid: true,
                     techOrder: ["html5"],
                     sources: [{
                         src: '{{ channel.url }}',
@@ -189,12 +198,12 @@
                     }]
                 });
 
-                player.qualityLevels(); 
+                player.qualityLevels();
             </script>
         </div>
 
         <div class="attention-bar">
-            <i class="fas fa-exclamation-circle"></i> <!-- Changed to a more visually appealing icon -->
+            <i class="fas fa-exclamation-circle"></i>
             <p>Your live quality will depend on your network. If your network is good, it will be able to deliver high quality.</p>
         </div>
 

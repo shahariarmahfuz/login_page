@@ -3,7 +3,7 @@ import requests
 
 facebook_blueprint = Blueprint('facebook', __name__, template_folder='templates')
 
-@facebookblueprint.route('/Facebook', methods=['GET'])
+@facebook_blueprint.route('/Facebook', methods=['GET'])
 def facebook():
     return render_template('Facebook.html', result=None)
 

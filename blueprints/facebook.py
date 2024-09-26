@@ -7,7 +7,7 @@ facebook_blueprint = Blueprint('facebook', __name__, template_folder='templates'
 def facebook():
     return render_template('Facebook.html', result=None)
 
-@facebook_downloader_blueprint.route('/download', methods=['GET'])
+@facebook_blueprint.route('/download', methods=['GET'])
 def download():
     video_url = request.args.get('url')
     if not video_url:

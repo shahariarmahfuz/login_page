@@ -1,11 +1,10 @@
-# facebook.py
 from flask import Blueprint, render_template, request
 import requests
 
 facebook_blueprint = Blueprint('facebook', __name__, template_folder='templates')
 
 @facebook_blueprint.route('/Facebook', methods=['GET', 'POST'])
-def Facebook():
+def facebook():  # It’s common to have route function names in lowercase
     result = None
     if request.method == 'POST':
         video_url = request.form['url']
@@ -19,7 +18,7 @@ def Facebook():
         response = requests.get(api_url, headers=headers)
         
         if response.status_code == 200:
-            result = response.json()  # assuming the API response is in JSON format
+            result = response.json()
         else:
             result = "Error fetching data from API."
     

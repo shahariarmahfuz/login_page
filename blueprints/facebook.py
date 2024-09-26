@@ -17,7 +17,7 @@ def download():
 
     headers = {
         'x-rapidapi-host': 'facebook-reel-and-video-downloader.p.rapidapi.com',
-        'x-rapidapi-key': 'YOUR_API_KEY'  # Replace with your actual API key
+        'x-rapidapi-key': '80f0a59b76msh49bd109c53bf5a9p1c1366jsn57f6e67af29d'  # Replace with your actual API key
     }
 
     response = requests.get(api_url, headers=headers)

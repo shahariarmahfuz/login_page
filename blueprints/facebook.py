@@ -1,14 +1,10 @@
 from flask import Blueprint, render_template, request
 import requests
 
-facebook_blueprint = Blueprint('facebook', __name__, template_folder='templates')
+downloader_blueprint = Blueprint('downloader', __name__, template_folder='../templates')
 
-@facebook_blueprint.route('/facebook', methods=['GET'])
-def facebook():
-    return render_template('Facebook.html', result=None)
-
-@facebook_blueprint.route('/download', methods=['GET'])
-def download():
+@downloader_blueprint.route('/fb', methods=['GET'])
+def deep_downloader():  # ফাংশনের নতুন নাম
     result = None
     video_url = request.args.get('url')  # Get the URL from the query parameters
 
@@ -27,5 +23,4 @@ def download():
         else:
             result = "Error fetching data from API."
     
-
-    return render_template('Facebook.html', result=result)
+    return render_template('facebook.html', result=result)
